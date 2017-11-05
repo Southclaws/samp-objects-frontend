@@ -10,10 +10,10 @@ interface ObjectsState {
     objects: ObjectData[];
 }
 
-function ObjectRow(props: { key: number }) {
+function ObjectRow(props: { key: number; object: ObjectData }) {
     return (
         <Col xs={12} md={3}>
-            <Thumb username="Southclaws" id="someobjectid" />
+            <Thumb object={props.object} />
         </Col>
     );
 }
@@ -23,9 +23,27 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
         super(props);
         this.state = {
             objects: [
-                { owner: "Southclaws", id: "id" },
-                { owner: "Southclaws", id: "id" },
-                { owner: "Southclaws", id: "id" }
+                {
+                    owner: "J0shES",
+                    id: "some-bullshit",
+                    rating: 2,
+                    image:
+                        "https://media.discordapp.net/attachments/376371371795546112/376808208041508869/unknown.png?width=200&height=200"
+                },
+                {
+                    owner: "TommyB",
+                    id: "wtf",
+                    rating: 3,
+                    image:
+                        "https://media.discordapp.net/attachments/376371371795546112/376802253819871233/unknown.png?width=200&height=200"
+                },
+                {
+                    owner: "Southclaws",
+                    id: "redis-statue",
+                    rating: 5,
+                    image:
+                        "https://d1q6f0aelx0por.cloudfront.net/product-logos/89e5782a-76ea-4b94-a561-39e331c281a5-redis.png"
+                }
             ]
         };
     }
@@ -44,7 +62,7 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                             index: number,
                             array: ObjectData[]
                         ) => {
-                            return <ObjectRow key={index} />;
+                            return <ObjectRow key={index} object={value} />;
                         }
                     )}
                 </Row>

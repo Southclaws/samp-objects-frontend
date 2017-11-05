@@ -3,6 +3,8 @@ import * as React from "react";
 export interface ObjectData {
     owner: string;
     id: string;
+    rating: number;
+    image: string;
 }
 
 interface DetailsProps {

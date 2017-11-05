@@ -3,3 +3,7 @@
     float: none;
     margin: 0 auto;
 }
+
+.thumb-stuff-separator {
+    opacity: 0;
+}
