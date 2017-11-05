@@ -1,6 +1,11 @@
 import * as React from "react";
 import "./App.scss";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect
+} from "react-router-dom";
 import { Grid } from "react-bootstrap";
 
 import { Navigation } from "./components/Navigation";
@@ -16,9 +21,37 @@ interface AppState {
 }
 
 class App extends React.Component<{}, AppState> {
-    componentDidMount() {
-        //
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            loggedIn: false
+        };
     }
+    componentDidMount() {
+        // check cookies for logged in state
+    }
+
+    loggedIn() {
+        return true;
+    }
+
+    IfLoggedIn = (thisProps: { path: string; component: Function }) => {
+        return (
+            <Route
+                render={props =>
+                    this.state.loggedIn ? (
+                        thisProps.component
+                    ) : (
+                        <Redirect
+                            to={{
+                                pathname: "/login",
+                                state: { from: props.location }
+                            }}
+                        />
+                    )}
+            />
+        );
+    };
 
     render() {
         return (
@@ -28,8 +61,14 @@ class App extends React.Component<{}, AppState> {
                     <Grid>
                         <Switch>
                             <Route exact path="/" component={Objects} />
-                            <Route path="/upload" component={Upload} />
-                            <Route path="/settings" component={Upload} />
+                            <this.IfLoggedIn
+                                path="/upload"
+                                component={Upload}
+                            />
+                            <this.IfLoggedIn
+                                path="/settings"
+                                component={Upload}
+                            />
                             <Route path="/register" component={Register} />
                             <Route path="/login" component={Login} />
                             <Route path="/:username/:id" component={Details} />

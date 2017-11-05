@@ -26,7 +26,7 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                 {
                     owner: "J0shES",
                     id: "some-bullshit",
-                    rating: 2,
+                    rating: 0.5,
                     image:
                         // tslint:disable-next-line
                         "https://media.discordapp.net/attachments/376371371795546112/376808208041508869/unknown.png?width=200&height=200"
@@ -46,6 +46,14 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                     image:
                         // tslint:disable-next-line
                         "https://d1q6f0aelx0por.cloudfront.net/product-logos/89e5782a-76ea-4b94-a561-39e331c281a5-redis.png"
+                },
+                {
+                    owner: "Vince0789",
+                    id: "roads-ftw",
+                    rating: 4.3,
+                    image:
+                        // tslint:disable-next-line
+                        "https://cdn.discordapp.com/attachments/376371371795546112/376819755291508736/modular_roads.jpg"
                 }
             ]
         };
