@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Thumbnail } from "react-bootstrap";
-import "./Thumb.css";
 import { Button, Tooltip } from "@blueprintjs/core";
+import { Link } from "react-router-dom";
 import ReactStars from "react-stars";
 
+import "./Thumb.css";
 import { ObjectData } from "./Details";
 
 interface ThumbProps {
@@ -13,22 +14,22 @@ interface ThumbProps {
 interface ThumbState {}
 
 export class Thumb extends React.Component<ThumbProps, ThumbState> {
-    // <LinkContainer
-    //     to={"/" + this.props.username + "/" + this.props.id}
-    // >
-    // </LinkContainer>
     render() {
         return (
-            <Thumbnail
-                bsSize="xs"
-                width={200}
-                height={200}
-                src={this.props.object.image}
-            >
+            <Thumbnail src={this.props.object.image}>
                 <div className="text-center">
-                    <p>
-                        {this.props.object.owner}/{this.props.object.id}
-                    </p>
+                    <div>
+                        <Link
+                            to={
+                                "/" +
+                                this.props.object.owner +
+                                "/" +
+                                this.props.object.id
+                            }
+                        >
+                            {this.props.object.owner}/{this.props.object.id}
+                        </Link>
+                    </div>
                     <div className="pt-button-group">
                         <Tooltip content="Details">
                             <Button iconName="pt-icon-search-template" />

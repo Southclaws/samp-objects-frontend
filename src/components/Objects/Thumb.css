@@ -7,3 +7,7 @@
 .thumb-stuff-separator {
     opacity: 0;
 }
+
+.thumbnail > img {
+    border-radius: 5px;
+}

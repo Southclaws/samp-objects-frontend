@@ -28,6 +28,7 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                     id: "some-bullshit",
                     rating: 2,
                     image:
+                        // tslint:disable-next-line
                         "https://media.discordapp.net/attachments/376371371795546112/376808208041508869/unknown.png?width=200&height=200"
                 },
                 {
@@ -35,6 +36,7 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                     id: "wtf",
                     rating: 3,
                     image:
+                        // tslint:disable-next-line
                         "https://media.discordapp.net/attachments/376371371795546112/376802253819871233/unknown.png?width=200&height=200"
                 },
                 {
@@ -42,6 +44,7 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                     id: "redis-statue",
                     rating: 5,
                     image:
+                        // tslint:disable-next-line
                         "https://d1q6f0aelx0por.cloudfront.net/product-logos/89e5782a-76ea-4b94-a561-39e331c281a5-redis.png"
                 }
             ]
