@@ -1,6 +1,8 @@
 import * as React from "react";
-import { Thumbnail, Button } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { Thumbnail } from "react-bootstrap";
+import "./Thumb.css";
+import { Button } from "@blueprintjs/core";
+// import { LinkContainer } from "react-router-bootstrap";
 
 interface ThumbProps {
     username: string;
@@ -10,17 +12,21 @@ interface ThumbProps {
 interface ThumbState {}
 
 export class Thumb extends React.Component<ThumbProps, ThumbState> {
+    // <LinkContainer
+    //     to={"/" + this.props.username + "/" + this.props.id}
+    // >
+    // </LinkContainer>
     render() {
         return (
-            <Thumbnail src="http://via.placeholder.com/200x200" alt="200x200">
-                <h4>Object</h4>
-                <LinkContainer
-                    to={"/" + this.props.username + "/" + this.props.id}
-                >
-                    <Button bsStyle="primary" bsSize="xsmall">
-                        Get
+            <Thumbnail src="http://via.placeholder.com/200x200">
+                <div className="text-center">
+                    <Button iconName="pt-icon-download" className="">
+                        Download
                     </Button>
-                </LinkContainer>
+                    <Button iconName="pt-icon-add-to-artifact" className="">
+                        Favourite
+                    </Button>
+                </div>
             </Thumbnail>
         );
     }

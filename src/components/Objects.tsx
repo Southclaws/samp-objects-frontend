@@ -12,7 +12,7 @@ interface ObjectsState {
 
 function ObjectRow(props: { key: number }) {
     return (
-        <Col xs={12} md={2}>
+        <Col xs={12} md={3}>
             <Thumb username="Southclaws" id="someobjectid" />
         </Col>
     );

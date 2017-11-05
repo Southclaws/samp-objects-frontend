@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./App.css";
+import "./App.scss";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Grid } from "react-bootstrap";
 
