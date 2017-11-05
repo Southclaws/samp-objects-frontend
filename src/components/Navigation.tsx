@@ -9,7 +9,7 @@ export class Navigation extends React.Component<{}, {}> {
             <Navbar staticTop collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <Link to="/">React-Bootstrap</Link>
+                        <Link to="/">SA:MP Objects</Link>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
