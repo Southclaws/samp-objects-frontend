@@ -35,6 +35,10 @@ class App extends React.Component<{}, AppState> {
         return true;
     }
 
+    // IfLoggedIn is a TypeScript version of:
+    // https://reacttraining.com/react-router/web/example/auth-workflow
+    // it's just a stateless component that takes path and component (similar to <Route>)
+    // and renders the component if the user is logged in, if not, it redirects to /login
     IfLoggedIn = (thisProps: { path: string; component: Function }) => {
         return (
             <Route
