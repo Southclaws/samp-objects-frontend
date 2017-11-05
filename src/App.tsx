@@ -21,7 +21,7 @@ interface AppState {
 }
 
 class App extends React.Component<{}, AppState> {
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props);
         this.state = {
             loggedIn: false
