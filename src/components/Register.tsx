@@ -5,6 +5,9 @@ import * as UsernameValidator from "regex-username";
 import * as Mailcheck from "mailcheck";
 import { Tooltip, Position } from "@blueprintjs/core";
 
+import { ENDPOINT } from "../App";
+import { User } from "../types/User";
+
 interface RegisterProps {}
 
 interface RegisterState {
@@ -15,6 +18,8 @@ interface RegisterState {
     validEmail: "none" | "valid" | "invalid";
     validPassword: "none" | "valid" | "invalid";
     suggestEmail: string;
+    tsAndcs: boolean;
+    checkReminder?: boolean;
 }
 
 export class Register extends React.Component<RegisterProps, RegisterState> {
@@ -27,7 +32,8 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             validUsername: "none",
             validEmail: "none",
             validPassword: "none",
-            suggestEmail: ""
+            suggestEmail: "",
+            tsAndcs: false
         };
     }
 
@@ -59,8 +65,34 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         });
     }
 
+    async onRegister() {
+        if (!this.state.tsAndcs) {
+            this.setState({ checkReminder: true });
+            return;
+        }
+
+        let user: User = {
+            username: this.state.username,
+            email: this.state.email,
+            password: this.state.password
+        };
+
+        console.log(user);
+
+        let raw = await fetch(ENDPOINT + "/v0/accounts/register", {
+            method: "post",
+            body: JSON.stringify(user),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        let response = await raw.json();
+
+        console.log(response);
+    }
+
     render() {
-        console.log(this.state.validUsername);
         return (
             <div>
                 <form>
@@ -135,12 +167,36 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                         </Tooltip>
                     </FormGroup>
 
-                    <Checkbox>
-                        I have read and understood the{" "}
-                        <Link to="/terms">Terms and Conditions</Link>
-                    </Checkbox>
-
-                    <Button type="submit">Submit</Button>
+                    <Tooltip
+                        content={"you must accept the terms and conditions"}
+                        isOpen={
+                            this.state.checkReminder !== undefined &&
+                            this.state.checkReminder
+                        }
+                    >
+                        <Checkbox
+                            onClick={e => {
+                                this.setState({
+                                    tsAndcs: (e.target as HTMLInputElement)
+                                        .checked,
+                                    checkReminder: false
+                                });
+                            }}
+                        >
+                            {"I have read and understood the "}
+                            <Link to="/terms">Terms and Conditions</Link>
+                        </Checkbox>
+                    </Tooltip>
+                    <div />
+                    <Button
+                        type="submit"
+                        onClick={e => {
+                            e.preventDefault();
+                            this.onRegister();
+                        }}
+                    >
+                        Submit
+                    </Button>
                 </form>
             </div>
         );

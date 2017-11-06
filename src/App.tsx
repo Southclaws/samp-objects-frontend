@@ -17,7 +17,7 @@ import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 
-export const ENDPOINT = "http://localhost:8080";
+export const ENDPOINT = "http://localtest.site:8080";
 
 interface AppState {
     token: string;
@@ -34,11 +34,18 @@ class App extends React.Component<{}, AppState> {
             token: token,
             loggedIn: token === undefined ? false : true
         };
-
-        console.log(this.state);
     }
-    componentDidMount() {
-        console.log(ENDPOINT);
+
+    async componentDidMount() {
+        let raw = await fetch(ENDPOINT + "/v0/index", {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        let resp = await raw.json();
+
+        console.log("index:", resp);
     }
 
     loggedIn() {
