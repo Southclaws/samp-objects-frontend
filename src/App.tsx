@@ -7,6 +7,7 @@ import {
     Redirect
 } from "react-router-dom";
 import { Grid } from "react-bootstrap";
+import cookie from "react-cookies";
 
 import { Navigation } from "./components/Navigation";
 import { Profile } from "./components/Profile";
@@ -16,23 +17,32 @@ import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 
+const ENDPOINT = "http://localhost:8080";
+
 interface AppState {
+    token: string;
     loggedIn: boolean;
 }
 
 class App extends React.Component<{}, AppState> {
     constructor(props: {}) {
         super(props);
+
+        let token = cookie.load("token");
+
         this.state = {
-            loggedIn: false
+            token: token,
+            loggedIn: token === undefined ? false : true
         };
+
+        console.log(this.state);
     }
     componentDidMount() {
-        // check cookies for logged in state
+        console.log(ENDPOINT);
     }
 
     loggedIn() {
-        return true;
+        return this.state.loggedIn;
     }
 
     // IfLoggedIn is a TypeScript version of:
@@ -61,7 +71,7 @@ class App extends React.Component<{}, AppState> {
         return (
             <Router>
                 <div>
-                    <Navigation />
+                    <Navigation loggedIn={this.state.loggedIn} />
                     <Grid>
                         <Switch>
                             <Route exact path="/" component={Objects} />
