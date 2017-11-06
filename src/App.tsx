@@ -17,7 +17,7 @@ import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 
-const ENDPOINT = "http://localhost:8080";
+export const ENDPOINT = "http://localhost:8080";
 
 interface AppState {
     token: string;
