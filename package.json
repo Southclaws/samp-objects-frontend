@@ -21,6 +21,7 @@
         "react-router-dom": "^4.2.2",
         "react-scripts-ts": "2.8.0",
         "react-stars": "^2.2.4",
+        "react-toastr": "^3.0.0",
         "regex-username": "^2.0.0"
     },
     "devDependencies": {
@@ -31,6 +32,7 @@
         "@types/react-bootstrap": "^0.31.6",
         "@types/react-dom": "^16.0.2",
         "@types/react-router-bootstrap": "^0.24.2",
-        "@types/react-router-dom": "^4.2.0"
+        "@types/react-router-dom": "^4.2.0",
+        "@types/toastr": "^2.1.35"
     }
 }

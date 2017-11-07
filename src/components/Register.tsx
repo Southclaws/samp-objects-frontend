@@ -8,18 +8,25 @@ import { Tooltip, Position } from "@blueprintjs/core";
 import { ENDPOINT } from "../App";
 import { User } from "../types/User";
 
-interface RegisterProps {}
+interface RegisterProps {
+    onSuccess: Function;
+}
 
 interface RegisterState {
     username: string;
     email: string;
     password: string;
-    validUsername: "none" | "valid" | "invalid";
-    validEmail: "none" | "valid" | "invalid";
-    validPassword: "none" | "valid" | "invalid";
+    validUsername: string;
+    validPassword: string;
     suggestEmail: string;
     tsAndcs: boolean;
     checkReminder?: boolean;
+    generalError: string;
+}
+
+interface RegisterResponse {
+    message: string;
+    token: string;
 }
 
 export class Register extends React.Component<RegisterProps, RegisterState> {
@@ -29,18 +36,27 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             username: "",
             email: "",
             password: "",
-            validUsername: "none",
-            validEmail: "none",
-            validPassword: "none",
+            validUsername: "",
+            validPassword: "",
             suggestEmail: "",
-            tsAndcs: false
+            tsAndcs: false,
+            generalError: ""
         };
     }
 
     onUpdateUsername(value: string) {
+        let validUsername = "";
+
+        if (
+            !UsernameValidator().test(value) &&
+            this.state.username.length > 0
+        ) {
+            validUsername = "invalid username";
+        }
+
         this.setState({
             username: value,
-            validUsername: UsernameValidator().test(value) ? "valid" : "invalid"
+            validUsername: validUsername
         });
     }
 
@@ -53,15 +69,15 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         });
 
         this.setState({
-            email: value,
-            validEmail: "valid"
+            email: value
         });
     }
 
     onUpdatePassword(value: string) {
         this.setState({
             password: value,
-            validPassword: value.length > 10 ? "valid" : "invalid"
+            validPassword:
+                value.length > 10 ? "" : "password must be over 10 characters"
         });
     }
 
@@ -77,19 +93,49 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             password: this.state.password
         };
 
-        console.log(user);
+        let raw: Response;
+        try {
+            raw = await fetch(ENDPOINT + "/v0/accounts/register", {
+                method: "post",
+                body: JSON.stringify(user),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+        } catch (err) {
+            this.setState({ generalError: (err as Error).message });
+            return;
+        }
 
-        let raw = await fetch(ENDPOINT + "/v0/accounts/register", {
-            method: "post",
-            body: JSON.stringify(user),
-            headers: {
-                "Content-Type": "application/json"
+        if (raw.status !== 200) {
+            this.setState({
+                generalError: "oops, unknown error! info: " + raw.statusText
+            });
+        }
+
+        let response = (await raw.json()) as RegisterResponse;
+
+        if (response.message !== undefined && response.message.length > 0) {
+            if (response.message === "username taken") {
+                this.setState({
+                    validUsername: "that username is already taken"
+                });
+            } else {
+                this.setState({
+                    generalError: response.message
+                });
             }
-        });
+            return;
+        }
 
-        let response = await raw.json();
+        if (response.token === undefined) {
+            this.setState({
+                generalError: "did not receive a JWT :("
+            });
+            return;
+        }
 
-        console.log(response);
+        this.props.onSuccess(response.token);
     }
 
     render() {
@@ -98,11 +144,8 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                 <form>
                     <FormGroup controlId="accountRegisterUsername">
                         <Tooltip
-                            content={"invalid username"}
-                            isOpen={
-                                this.state.validUsername === "invalid" &&
-                                this.state.username.length > 0
-                            }
+                            content={this.state.validUsername}
+                            isOpen={this.state.validUsername.length > 0}
                             hoverOpenDelay={1000000}
                             position={Position.RIGHT}
                         >
@@ -188,15 +231,20 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                         </Checkbox>
                     </Tooltip>
                     <div />
-                    <Button
-                        type="submit"
-                        onClick={e => {
-                            e.preventDefault();
-                            this.onRegister();
-                        }}
+                    <Tooltip
+                        content={this.state.generalError}
+                        isOpen={this.state.generalError.length > 0}
                     >
-                        Submit
-                    </Button>
+                        <Button
+                            type="submit"
+                            onClick={e => {
+                                e.preventDefault();
+                                this.onRegister();
+                            }}
+                        >
+                            Submit
+                        </Button>
+                    </Tooltip>
                 </form>
             </div>
         );

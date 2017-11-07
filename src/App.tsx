@@ -74,6 +74,11 @@ class App extends React.Component<{}, AppState> {
         );
     };
 
+    onRegister(token: string) {
+        console.log(token);
+        cookie.save("token", token);
+    }
+
     render() {
         return (
             <Router>
@@ -90,7 +95,14 @@ class App extends React.Component<{}, AppState> {
                                 path="/settings"
                                 component={Upload}
                             />
-                            <Route path="/register" component={Register} />
+                            <Route
+                                path="/register"
+                                render={props => (
+                                    <Register
+                                        onSuccess={this.onRegister.bind(this)}
+                                    />
+                                )}
+                            />
                             <Route path="/login" component={Login} />
                             <Route path="/:username/:id" component={Details} />
                             <Route path="/:username" component={Profile} />
