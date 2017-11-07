@@ -46,17 +46,19 @@ export class Navigation extends React.Component<Props, State> {
                                 </LinkContainer>
                             </NavDropdown>
                         ) : (
-                            <LinkContainer to="/register">
-                                <NavItem eventKey={1} href="#">
-                                    Register
-                                </NavItem>
-                            </LinkContainer>
+                            <Nav>
+                                <LinkContainer to="/register">
+                                    <NavItem eventKey={1} href="#">
+                                        Register
+                                    </NavItem>
+                                </LinkContainer>
+                                <LinkContainer to="/login">
+                                    <NavItem eventKey={1} href="#">
+                                        Login
+                                    </NavItem>
+                                </LinkContainer>
+                            </Nav>
                         )}
-                        <LinkContainer to="/login">
-                            <NavItem eventKey={1} href="#">
-                                Login
-                            </NavItem>
-                        </LinkContainer>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

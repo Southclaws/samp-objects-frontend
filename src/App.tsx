@@ -45,7 +45,11 @@ class App extends React.Component<{}, AppState> {
         });
         let resp = await raw.json();
 
-        console.log("index:", resp);
+        console.log({
+            index: resp,
+            loggedIn: this.state.loggedIn,
+            token: this.state.token
+        });
     }
 
     loggedIn() {
