@@ -3,8 +3,10 @@ import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 
+import { User } from "../types/User";
+
 interface Props {
-    loggedIn: boolean;
+    user?: User;
 }
 
 interface State {}
@@ -28,7 +30,7 @@ export class Navigation extends React.Component<Props, State> {
                         </LinkContainer>
                     </Nav>
                     <Nav pullRight>
-                        {this.props.loggedIn ? (
+                        {this.props.user !== undefined ? (
                             <NavDropdown
                                 eventKey={2}
                                 title="Account"
@@ -46,18 +48,18 @@ export class Navigation extends React.Component<Props, State> {
                                 </LinkContainer>
                             </NavDropdown>
                         ) : (
-                            <Nav>
-                                <LinkContainer to="/register">
-                                    <NavItem eventKey={1} href="#">
-                                        Register
-                                    </NavItem>
-                                </LinkContainer>
-                                <LinkContainer to="/login">
-                                    <NavItem eventKey={1} href="#">
-                                        Login
-                                    </NavItem>
-                                </LinkContainer>
-                            </Nav>
+                            <LinkContainer to="/register">
+                                <NavItem eventKey={1} href="#">
+                                    Register
+                                </NavItem>
+                            </LinkContainer>
+                        )}
+                        {this.props.user !== undefined ? null : (
+                            <LinkContainer to="/login">
+                                <NavItem eventKey={1} href="#">
+                                    Login
+                                </NavItem>
+                            </LinkContainer>
                         )}
                     </Nav>
                 </Navbar.Collapse>

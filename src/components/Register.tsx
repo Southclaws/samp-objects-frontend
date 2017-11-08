@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import * as UsernameValidator from "regex-username";
 import * as Mailcheck from "mailcheck";
 import { Tooltip, Position } from "@blueprintjs/core";
+import * as SHA256 from "js-sha256";
 
 import { ENDPOINT } from "../App";
 import { User } from "../types/User";
@@ -24,9 +25,9 @@ interface RegisterState {
     generalError: string;
 }
 
-interface RegisterResponse {
-    message: string;
+interface TokenResponse {
     token: string;
+    userID: string;
 }
 
 export class Register extends React.Component<RegisterProps, RegisterState> {
@@ -90,7 +91,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         let user: User = {
             username: this.state.username,
             email: this.state.email,
-            password: this.state.password
+            password: SHA256.sha256(this.state.password)
         };
 
         let raw: Response;
@@ -98,6 +99,8 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             raw = await fetch(ENDPOINT + "/v0/accounts/register", {
                 method: "post",
                 body: JSON.stringify(user),
+                mode: "cors",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -108,25 +111,26 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         }
 
         if (raw.status !== 200) {
-            this.setState({
-                generalError: "oops, unknown error! info: " + raw.statusText
-            });
-        }
+            switch (raw.status) {
+                case 409:
+                    this.setState({
+                        validUsername: "that username is already taken"
+                    });
+                    break;
 
-        let response = (await raw.json()) as RegisterResponse;
-
-        if (response.message !== undefined && response.message.length > 0) {
-            if (response.message === "username taken") {
-                this.setState({
-                    validUsername: "that username is already taken"
-                });
-            } else {
-                this.setState({
-                    generalError: response.message
-                });
+                default:
+                    this.setState({
+                        generalError:
+                            "oops, unknown error! info: " + raw.statusText
+                    });
+                    break;
             }
             return;
         }
+
+        console.log(raw.headers);
+
+        let response = (await raw.json()) as TokenResponse;
 
         if (response.token === undefined) {
             this.setState({
@@ -135,7 +139,14 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             return;
         }
 
-        this.props.onSuccess(response.token);
+        if (response.userID === undefined) {
+            this.setState({
+                generalError: "did not receive a userID :("
+            });
+            return;
+        }
+
+        this.props.onSuccess(response.token, response.userID);
     }
 
     render() {
@@ -234,6 +245,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                     <Tooltip
                         content={this.state.generalError}
                         isOpen={this.state.generalError.length > 0}
+                        position={Position.RIGHT}
                     >
                         <Button
                             type="submit"

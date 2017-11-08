@@ -9,6 +9,7 @@ import {
 import { Grid } from "react-bootstrap";
 import cookie from "react-cookies";
 
+import { User } from "./types/User";
 import { Navigation } from "./components/Navigation";
 import { Profile } from "./components/Profile";
 import { Upload } from "./components/Upload";
@@ -17,11 +18,26 @@ import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 
-export const ENDPOINT = "http://localtest.site:8080";
+export const HOST = "localhost";
+export const API_PORT = "8080";
+export const SELFURL = "http://" + HOST + ":3000";
+export const ENDPOINT = "http://" + HOST + ":" + API_PORT;
+const COOKIE_OPTIONS: {
+    path?: string;
+    expires?: Date;
+    maxAge?: number;
+    domain?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+} = {
+    path: HOST,
+    domain: HOST
+};
 
 interface AppState {
     token: string;
-    loggedIn: boolean;
+    userID?: string;
+    user?: User;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -29,31 +45,64 @@ class App extends React.Component<{}, AppState> {
         super(props);
 
         let token = cookie.load("token");
+        let userID = cookie.load("userID");
 
         this.state = {
             token: token,
-            loggedIn: token === undefined ? false : true
+            userID: userID
         };
     }
 
     async componentDidMount() {
-        let raw = await fetch(ENDPOINT + "/v0/index", {
+        let rawIndex = await fetch(ENDPOINT + "/v0/index", {
             method: "get",
+            credentials: "include",
+            mode: "cors",
             headers: {
                 "Content-Type": "application/json"
             }
         });
-        let resp = await raw.json();
+        let resp = await rawIndex.json();
 
         console.log({
             index: resp,
-            loggedIn: this.state.loggedIn,
             token: this.state.token
         });
+
+        if (this.state.userID !== undefined) {
+            console.log(document.cookie);
+            let rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
+                method: "get",
+                credentials: "include",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + this.state.token
+                }
+            });
+
+            if (rawUser.status !== 200) {
+                console.log(
+                    "failed to get user info:",
+                    rawUser.statusText,
+                    await rawUser.text()
+                );
+                return;
+            }
+
+            let user = (await rawUser.json()) as User;
+
+            if (user.id !== this.state.userID) {
+                console.log("user ID does not match returned user object");
+                return;
+            }
+
+            this.setState({ user: user });
+        }
     }
 
     loggedIn() {
-        return this.state.loggedIn;
+        return this.state.user !== undefined;
     }
 
     // IfLoggedIn is a TypeScript version of:
@@ -64,7 +113,7 @@ class App extends React.Component<{}, AppState> {
         return (
             <Route
                 render={props =>
-                    this.state.loggedIn ? (
+                    this.state.user !== undefined ? (
                         thisProps.component
                     ) : (
                         <Redirect
@@ -78,16 +127,30 @@ class App extends React.Component<{}, AppState> {
         );
     };
 
-    onRegister(token: string) {
-        console.log(token);
-        cookie.save("token", token);
+    onRegister(token: string, userID: string) {
+        console.log("set", token, userID);
+
+        let options = COOKIE_OPTIONS;
+
+        const expires = new Date();
+        expires.setDate(Date.now() + 1000 * 60 * 60 * 24 * 14);
+        options.expires = expires;
+
+        let r = cookie.save("token", token, options);
+        r = cookie.save("userID", userID, options);
+
+        this.setState({
+            token: token,
+            userID: userID
+        });
+        // location.href = "/";
     }
 
     render() {
         return (
             <Router>
                 <div>
-                    <Navigation loggedIn={this.state.loggedIn} />
+                    <Navigation user={this.state.user} />
                     <Grid>
                         <Switch>
                             <Route exact path="/" component={Objects} />
