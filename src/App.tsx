@@ -162,14 +162,20 @@ class App extends React.Component<{}, AppState> {
                                 path="/settings"
                                 component={Upload}
                             />
-                            <Route
-                                path="/register"
-                                render={props => (
-                                    <Register
-                                        onSuccess={this.onRegister.bind(this)}
-                                    />
-                                )}
-                            />
+                            {this.state.user === undefined ? (
+                                <Route
+                                    path="/register"
+                                    render={props => (
+                                        <Register
+                                            onSuccess={this.onRegister.bind(
+                                                this
+                                            )}
+                                        />
+                                    )}
+                                />
+                            ) : (
+                                <Redirect to="/" />
+                            )}
                             <Route path="/login" component={Login} />
                             <Route path="/:username/:id" component={Details} />
                             <Route path="/:username" component={Profile} />

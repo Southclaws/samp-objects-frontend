@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormGroup, FormControl, Checkbox, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import * as UsernameValidator from "regex-username";
 import * as Mailcheck from "mailcheck";
 import { Tooltip, Position } from "@blueprintjs/core";
@@ -23,6 +23,7 @@ interface RegisterState {
     tsAndcs: boolean;
     checkReminder?: boolean;
     generalError: string;
+    done?: boolean;
 }
 
 interface TokenResponse {
@@ -146,10 +147,15 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             return;
         }
 
+        this.setState({ done: true });
         this.props.onSuccess(response.token, response.userID);
     }
 
     render() {
+        if (this.state.done !== undefined && this.state.done === true) {
+            return <Redirect to="/" />;
+        }
+
         return (
             <div>
                 <form>
