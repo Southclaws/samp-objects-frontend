@@ -86,11 +86,8 @@ export class Login extends React.Component<LoginProps, LoginState> {
                     </FormGroup>
                     <FormGroup controlId="accountRegisterPassword">
                         <Tooltip
-                            content={"password must be at least 10 characters"}
-                            isOpen={
-                                this.state.validPassword === "invalid" &&
-                                this.state.password.length > 0
-                            }
+                            content={this.state.validPassword}
+                            isOpen={this.state.password.length > 0}
                             hoverOpenDelay={1000000}
                             position={Position.RIGHT}
                         >
