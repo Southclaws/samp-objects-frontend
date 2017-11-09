@@ -12,6 +12,7 @@ import cookie from "react-cookies";
 import { User } from "./types/User";
 import { Navigation } from "./components/Navigation";
 import { Profile } from "./components/Profile";
+import { Settings } from "./components/Settings";
 import { Upload } from "./components/Upload";
 import { Objects } from "./components/Objects";
 import { Details } from "./components/Objects/Details";
@@ -35,14 +36,16 @@ const COOKIE_OPTIONS: {
     domain: HOST
 };
 
+interface AppProps {}
+
 interface AppState {
     token: string;
     userID?: string;
     user?: User;
 }
 
-class App extends React.Component<{}, AppState> {
-    constructor(props: {}) {
+class App extends React.Component<AppProps, AppState> {
+    constructor(props: AppProps) {
         super(props);
 
         let token = cookie.load("token");
@@ -170,22 +173,18 @@ class App extends React.Component<{}, AppState> {
                             />
                             <this.IfLoggedIn
                                 path="/settings"
-                                component={Upload}
+                                component={Settings}
                             />
-                            {this.state.user === undefined ? (
-                                <Route
-                                    path="/register"
-                                    render={props => (
-                                        <Register
-                                            onSuccess={this.onReceiveToken.bind(
-                                                this
-                                            )}
-                                        />
-                                    )}
-                                />
-                            ) : (
-                                <Redirect to="/" />
-                            )}
+                            <Route
+                                path="/register"
+                                render={props => (
+                                    <Register
+                                        onSuccess={this.onReceiveToken.bind(
+                                            this
+                                        )}
+                                    />
+                                )}
+                            />
                             <Route
                                 path="/login"
                                 render={props => (

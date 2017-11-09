@@ -36,13 +36,18 @@ export class Navigation extends React.Component<Props, State> {
                                 title="Account"
                                 id="basic-nav-dropdown"
                             >
-                                <LinkContainer to="/profile">
+                                <LinkContainer
+                                    to={"/" + this.props.user.username}
+                                >
                                     <MenuItem eventKey={2.1}>Profile</MenuItem>
                                 </LinkContainer>
+
                                 <LinkContainer to="/settings">
                                     <MenuItem eventKey={2.2}>Settings</MenuItem>
                                 </LinkContainer>
+
                                 <MenuItem divider />
+
                                 <LinkContainer to="/logout">
                                     <MenuItem eventKey={2.3}>Log Out</MenuItem>
                                 </LinkContainer>
