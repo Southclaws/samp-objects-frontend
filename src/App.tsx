@@ -144,7 +144,7 @@ class App extends React.Component<AppProps, AppState> {
             token: token,
             userID: userID
         });
-        // location.href = "/";
+        location.href = "/";
     }
 
     onLogout() {
@@ -155,8 +155,10 @@ class App extends React.Component<AppProps, AppState> {
 
         this.setState({
             token: "",
-            userID: undefined
+            userID: undefined,
+            user: undefined
         });
+        location.href = "/";
     }
 
     render() {
