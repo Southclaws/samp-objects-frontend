@@ -7,6 +7,7 @@ import { Tooltip, Position } from "@blueprintjs/core";
 import * as SHA256 from "js-sha256";
 
 import { ENDPOINT } from "../App";
+import { TokenResponse } from "../types/Token";
 import { User } from "../types/User";
 
 interface RegisterProps {
@@ -24,11 +25,6 @@ interface RegisterState {
     checkReminder?: boolean;
     generalError: string;
     done?: boolean;
-}
-
-interface TokenResponse {
-    token: string;
-    userID: string;
 }
 
 export class Register extends React.Component<RegisterProps, RegisterState> {
@@ -128,8 +124,6 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             }
             return;
         }
-
-        console.log(raw.headers);
 
         let response = (await raw.json()) as TokenResponse;
 

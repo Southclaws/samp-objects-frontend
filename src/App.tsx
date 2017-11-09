@@ -17,6 +17,7 @@ import { Objects } from "./components/Objects";
 import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
+import { Logout } from "./components/Logout";
 
 export const HOST = "localhost";
 export const API_PORT = "8080";
@@ -70,7 +71,6 @@ class App extends React.Component<{}, AppState> {
         });
 
         if (this.state.userID !== undefined) {
-            console.log(document.cookie);
             let rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
                 method: "get",
                 credentials: "include",
@@ -127,9 +127,7 @@ class App extends React.Component<{}, AppState> {
         );
     };
 
-    onRegister(token: string, userID: string) {
-        console.log("set", token, userID);
-
+    onReceiveToken(token: string, userID: string) {
         let options = COOKIE_OPTIONS;
 
         const expires = new Date();
@@ -144,6 +142,18 @@ class App extends React.Component<{}, AppState> {
             userID: userID
         });
         // location.href = "/";
+    }
+
+    onLogout() {
+        console.log("logging user out");
+        cookie.remove("token", COOKIE_OPTIONS);
+        cookie.remove("userID", COOKIE_OPTIONS);
+        cookie.remove("userAuthData", COOKIE_OPTIONS);
+
+        this.setState({
+            token: "",
+            userID: undefined
+        });
     }
 
     render() {
@@ -167,7 +177,7 @@ class App extends React.Component<{}, AppState> {
                                     path="/register"
                                     render={props => (
                                         <Register
-                                            onSuccess={this.onRegister.bind(
+                                            onSuccess={this.onReceiveToken.bind(
                                                 this
                                             )}
                                         />
@@ -176,7 +186,24 @@ class App extends React.Component<{}, AppState> {
                             ) : (
                                 <Redirect to="/" />
                             )}
-                            <Route path="/login" component={Login} />
+                            <Route
+                                path="/login"
+                                render={props => (
+                                    <Login
+                                        onSuccess={this.onReceiveToken.bind(
+                                            this
+                                        )}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path="/logout"
+                                render={props => (
+                                    <Logout
+                                        onLogout={this.onLogout.bind(this)}
+                                    />
+                                )}
+                            />
                             <Route path="/:username/:id" component={Details} />
                             <Route path="/:username" component={Profile} />
                         </Switch>
