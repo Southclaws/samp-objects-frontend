@@ -6,7 +6,7 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import { Grid } from "react-bootstrap";
+import { Grid, Alert } from "react-bootstrap";
 import cookie from "react-cookies";
 
 import { User } from "./types/User";
@@ -42,6 +42,7 @@ interface AppState {
     token: string;
     userID?: string;
     user?: User;
+    error?: string | JSX.Element;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -58,20 +59,33 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     async componentDidMount() {
-        let rawIndex = await fetch(ENDPOINT + "/v0/index", {
-            method: "get",
-            credentials: "include",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        let resp = await rawIndex.json();
+        try {
+            let rawIndex = await fetch(ENDPOINT + "/v0/index", {
+                method: "get",
+                credentials: "include",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            let resp = await rawIndex.json();
 
-        console.log({
-            index: resp,
-            token: this.state.token
-        });
+            console.log({
+                index: resp,
+                token: this.state.token
+            });
+        } catch (e) {
+            this.onError(
+                <div>
+                    <p>Connection to the API server failed</p>
+                    <p>
+                        It may be offline temporarily for maintenance so please
+                        retry in a few minutes. If this problem persists, please
+                        let Southclaws know via SA:MP Forum, Discord or Twitter
+                    </p>
+                </div>
+            );
+        }
 
         if (this.state.userID !== undefined) {
             let rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
@@ -161,54 +175,48 @@ class App extends React.Component<AppProps, AppState> {
         location.href = "/";
     }
 
+    onError(err: string | JSX.Element) {
+        this.setState({ error: err });
+    }
+
     render() {
+        let mainContent =
+            this.state.error === undefined ? (
+                <Switch>
+                    <Route exact path="/" component={Objects} />
+                    <this.IfLoggedIn path="/upload" component={Upload} />
+                    <this.IfLoggedIn path="/settings" component={Settings} />
+                    <Route
+                        path="/register"
+                        render={props => (
+                            <Register
+                                onSuccess={this.onReceiveToken.bind(this)}
+                            />
+                        )}
+                    />
+                    <Route
+                        path="/login"
+                        render={props => (
+                            <Login onSuccess={this.onReceiveToken.bind(this)} />
+                        )}
+                    />
+                    <Route
+                        path="/logout"
+                        render={props => (
+                            <Logout onLogout={this.onLogout.bind(this)} />
+                        )}
+                    />
+                    <Route path="/:username/:id" component={Details} />
+                    <Route path="/:username" component={Profile} />
+                </Switch>
+            ) : (
+                <Alert bsStyle="danger">{this.state.error}</Alert>
+            );
         return (
             <Router>
                 <div>
                     <Navigation user={this.state.user} />
-                    <Grid>
-                        <Switch>
-                            <Route exact path="/" component={Objects} />
-                            <this.IfLoggedIn
-                                path="/upload"
-                                component={Upload}
-                            />
-                            <this.IfLoggedIn
-                                path="/settings"
-                                component={Settings}
-                            />
-                            <Route
-                                path="/register"
-                                render={props => (
-                                    <Register
-                                        onSuccess={this.onReceiveToken.bind(
-                                            this
-                                        )}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path="/login"
-                                render={props => (
-                                    <Login
-                                        onSuccess={this.onReceiveToken.bind(
-                                            this
-                                        )}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path="/logout"
-                                render={props => (
-                                    <Logout
-                                        onLogout={this.onLogout.bind(this)}
-                                    />
-                                )}
-                            />
-                            <Route path="/:username/:id" component={Details} />
-                            <Route path="/:username" component={Profile} />
-                        </Switch>
-                    </Grid>
+                    <Grid>{mainContent} </Grid>
                 </div>
             </Router>
         );
