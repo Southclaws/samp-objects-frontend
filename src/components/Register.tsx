@@ -19,8 +19,8 @@ interface RegisterState {
     email: string;
     password: string;
     validUsername: string;
+    validEmail: string;
     validPassword: string;
-    suggestEmail: string;
     tsAndcs: boolean;
     checkReminder?: boolean;
     generalError: string;
@@ -35,8 +35,8 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
             email: "",
             password: "",
             validUsername: "",
+            validEmail: "",
             validPassword: "",
-            suggestEmail: "",
             tsAndcs: false,
             generalError: ""
         };
@@ -62,7 +62,9 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         Mailcheck.run({
             email: value,
             suggested: (suggestion: MailcheckModule.ISuggestion) => {
-                this.setState({ suggestEmail: suggestion.full });
+                this.setState({
+                    validEmail: "did you mean " + suggestion.full + "?"
+                });
             }
         });
 
@@ -112,6 +114,12 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                 case 409:
                     this.setState({
                         validUsername: "that username is already taken"
+                    });
+                    break;
+
+                case 418:
+                    this.setState({
+                        validEmail: "that email has already been registered"
                     });
                     break;
 
@@ -175,13 +183,11 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                     </FormGroup>
                     <FormGroup controlId="accountRegisterEmail">
                         <Tooltip
-                            content={
-                                "did you mean " + this.state.suggestEmail + "?"
-                            }
+                            content={this.state.validEmail}
                             isOpen={
-                                this.state.suggestEmail.length > 0 &&
+                                this.state.validEmail.length > 0 &&
                                 this.state.email.length > 0 &&
-                                this.state.email !== this.state.suggestEmail
+                                this.state.email !== this.state.validEmail
                             }
                             hoverOpenDelay={1000000}
                             position={Position.RIGHT}
