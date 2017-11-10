@@ -1,5 +1,13 @@
 import * as React from "react";
-import { FormGroup, FormControl, Checkbox, Button } from "react-bootstrap";
+import {
+    Grid,
+    Row,
+    Col,
+    FormGroup,
+    FormControl,
+    Checkbox,
+    Button
+} from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import * as UsernameValidator from "regex-username";
 import * as Mailcheck from "mailcheck";
@@ -126,7 +134,10 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                 default:
                     this.setState({
                         generalError:
-                            "oops, unknown error! info: " + raw.statusText
+                            "oops, unknown error! info: " +
+                            raw.statusText +
+                            ": " +
+                            raw.body
                     });
                     break;
             }
@@ -159,109 +170,121 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         }
 
         return (
-            <div>
-                <form>
-                    <FormGroup controlId="accountRegisterUsername">
-                        <Tooltip
-                            content={this.state.validUsername}
-                            isOpen={this.state.validUsername.length > 0}
-                            hoverOpenDelay={1000000}
-                            position={Position.RIGHT}
-                        >
-                            <FormControl
-                                type="username"
-                                placeholder="username"
-                                required
-                                autoFocus
-                                onChange={e => {
-                                    return this.onUpdateUsername(
-                                        (e.target as HTMLInputElement).value
-                                    );
-                                }}
-                            />
-                        </Tooltip>
-                    </FormGroup>
-                    <FormGroup controlId="accountRegisterEmail">
-                        <Tooltip
-                            content={this.state.validEmail}
-                            isOpen={
-                                this.state.validEmail.length > 0 &&
-                                this.state.email.length > 0 &&
-                                this.state.email !== this.state.validEmail
-                            }
-                            hoverOpenDelay={1000000}
-                            position={Position.RIGHT}
-                        >
-                            <FormControl
-                                type="email"
-                                placeholder="email"
-                                required
-                                onChange={e => {
-                                    return this.onUpdateEmail(
-                                        (e.target as HTMLInputElement).value
-                                    );
-                                }}
-                            />
-                        </Tooltip>
-                    </FormGroup>
-                    <FormGroup controlId="accountRegisterPassword">
-                        <Tooltip
-                            content={this.state.validPassword}
-                            isOpen={this.state.password.length > 0}
-                            hoverOpenDelay={1000000}
-                            position={Position.RIGHT}
-                        >
-                            <FormControl
-                                type="password"
-                                placeholder="password"
-                                required
-                                onChange={e => {
-                                    return this.onUpdatePassword(
-                                        (e.target as HTMLInputElement).value
-                                    );
-                                }}
-                            />
-                        </Tooltip>
-                    </FormGroup>
+            <Grid>
+                <Row>
+                    <Col xs={6} xsOffset={3}>
+                        <form>
+                            <FormGroup controlId="accountRegisterUsername">
+                                <Tooltip
+                                    content={this.state.validUsername}
+                                    isOpen={this.state.validUsername.length > 0}
+                                    hoverOpenDelay={1000000}
+                                    position={Position.RIGHT}
+                                >
+                                    <FormControl
+                                        type="username"
+                                        placeholder="username"
+                                        required
+                                        autoFocus
+                                        onChange={e => {
+                                            return this.onUpdateUsername(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            );
+                                        }}
+                                    />
+                                </Tooltip>
+                            </FormGroup>
+                            <FormGroup controlId="accountRegisterEmail">
+                                <Tooltip
+                                    content={this.state.validEmail}
+                                    isOpen={
+                                        this.state.validEmail.length > 0 &&
+                                        this.state.email.length > 0 &&
+                                        this.state.email !==
+                                            this.state.validEmail
+                                    }
+                                    hoverOpenDelay={1000000}
+                                    position={Position.RIGHT}
+                                >
+                                    <FormControl
+                                        type="email"
+                                        placeholder="email"
+                                        required
+                                        onChange={e => {
+                                            return this.onUpdateEmail(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            );
+                                        }}
+                                    />
+                                </Tooltip>
+                            </FormGroup>
+                            <FormGroup controlId="accountRegisterPassword">
+                                <Tooltip
+                                    content={this.state.validPassword}
+                                    isOpen={this.state.password.length > 0}
+                                    hoverOpenDelay={1000000}
+                                    position={Position.RIGHT}
+                                >
+                                    <FormControl
+                                        type="password"
+                                        placeholder="password"
+                                        required
+                                        onChange={e => {
+                                            return this.onUpdatePassword(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            );
+                                        }}
+                                    />
+                                </Tooltip>
+                            </FormGroup>
 
-                    <Tooltip
-                        content={"you must accept the terms and conditions"}
-                        isOpen={
-                            this.state.checkReminder !== undefined &&
-                            this.state.checkReminder
-                        }
-                    >
-                        <Checkbox
-                            onClick={e => {
-                                this.setState({
-                                    tsAndcs: (e.target as HTMLInputElement)
-                                        .checked,
-                                    checkReminder: false
-                                });
-                            }}
-                        >
-                            {"I have read and understood the "}
-                            <Link to="/terms">Terms and Conditions</Link>
-                        </Checkbox>
-                    </Tooltip>
-                    <div />
-                    <Tooltip
-                        content={this.state.generalError}
-                        isOpen={this.state.generalError.length > 0}
-                        position={Position.RIGHT}
-                    >
-                        <Button
-                            type="submit"
-                            onClick={e => {
-                                e.preventDefault();
-                                this.onRegister();
-                            }}
-                        >
-                            Submit
-                        </Button>
-                    </Tooltip>
-                </form>
-            </div>
+                            <Tooltip
+                                content={
+                                    "you must accept the terms and conditions"
+                                }
+                                isOpen={
+                                    this.state.checkReminder !== undefined &&
+                                    this.state.checkReminder
+                                }
+                            >
+                                <Checkbox
+                                    onClick={e => {
+                                        this.setState({
+                                            tsAndcs: (e.target as HTMLInputElement)
+                                                .checked,
+                                            checkReminder: false
+                                        });
+                                    }}
+                                >
+                                    {"I have read and understood the "}
+                                    <Link to="/terms">
+                                        Terms and Conditions
+                                    </Link>
+                                </Checkbox>
+                            </Tooltip>
+                            <div />
+                            <Tooltip
+                                content={this.state.generalError}
+                                isOpen={this.state.generalError.length > 0}
+                                position={Position.RIGHT}
+                            >
+                                <Button
+                                    type="submit"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        this.onRegister();
+                                    }}
+                                >
+                                    Submit
+                                </Button>
+                            </Tooltip>
+                        </form>
+                    </Col>
+                </Row>
+            </Grid>
         );
     }
 }

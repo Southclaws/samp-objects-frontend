@@ -6,7 +6,7 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import { Grid, Alert } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import cookie from "react-cookies";
 
 import { User } from "./types/User";
@@ -61,10 +61,9 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     async componentDidMount() {
-        let error: string | JSX.Element = "";
+        let error: string | JSX.Element | undefined = undefined;
         let user: User | string | undefined;
 
-        console.log("attempt connect");
         try {
             let index = await this.aliveCheck();
             console.log(index);
@@ -216,6 +215,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     onError(err: string | JSX.Element) {
+        console.log("Error event:", err);
         this.setState({ error: err });
     }
 
@@ -272,7 +272,7 @@ class App extends React.Component<AppProps, AppState> {
             <Router>
                 <div>
                     <Navigation user={this.state.user} />
-                    <Grid>{mainContent} </Grid>
+                    {mainContent}
                 </div>
             </Router>
         );

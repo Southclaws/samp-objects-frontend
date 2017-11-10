@@ -1,5 +1,13 @@
 import * as React from "react";
-import { FormGroup, FormControl, Button } from "react-bootstrap";
+import {
+    Grid,
+    Row,
+    Col,
+    FormGroup,
+    FormControl,
+    Button,
+    Alert
+} from "react-bootstrap";
 import { Tooltip, Position } from "@blueprintjs/core";
 import * as UsernameValidator from "regex-username";
 import * as SHA256 from "js-sha256";
@@ -87,7 +95,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
             switch (raw.status) {
                 default:
                     this.setState({
-                        generalError: "unknown error: " + raw.statusText
+                        generalError: raw.statusText + ": " + (await raw.text())
                     });
                     break;
             }
@@ -116,64 +124,69 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
     render() {
         return (
-            <div>
-                <form>
-                    <FormGroup controlId="accountRegisterUsername">
-                        <Tooltip
-                            content={this.state.validUsername}
-                            isOpen={this.state.validUsername.length > 0}
-                            hoverOpenDelay={1000000}
-                            position={Position.RIGHT}
-                        >
-                            <FormControl
-                                type="username"
-                                placeholder="username"
-                                required
-                                autoFocus
-                                onChange={e => {
-                                    return this.onUpdateUsername(
-                                        (e.target as HTMLInputElement).value
-                                    );
+            <Grid>
+                <Row>
+                    <Col xs={6} xsOffset={3}>
+                        <form>
+                            <FormGroup controlId="accountRegisterUsername">
+                                <Tooltip
+                                    content={this.state.validUsername}
+                                    isOpen={this.state.validUsername.length > 0}
+                                    hoverOpenDelay={1000000}
+                                    position={Position.RIGHT}
+                                >
+                                    <FormControl
+                                        type="username"
+                                        placeholder="username"
+                                        required
+                                        autoFocus
+                                        onChange={e => {
+                                            return this.onUpdateUsername(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            );
+                                        }}
+                                    />
+                                </Tooltip>
+                            </FormGroup>
+                            <FormGroup controlId="accountRegisterPassword">
+                                <Tooltip
+                                    content={this.state.validPassword}
+                                    isOpen={this.state.password.length > 0}
+                                    hoverOpenDelay={1000000}
+                                    position={Position.RIGHT}
+                                >
+                                    <FormControl
+                                        type="password"
+                                        placeholder="password"
+                                        required
+                                        onChange={e => {
+                                            return this.onUpdatePassword(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            );
+                                        }}
+                                    />
+                                </Tooltip>
+                            </FormGroup>
+                            <Button
+                                type="submit"
+                                onClick={e => {
+                                    e.preventDefault();
+                                    this.onLogin();
                                 }}
-                            />
-                        </Tooltip>
-                    </FormGroup>
-                    <FormGroup controlId="accountRegisterPassword">
-                        <Tooltip
-                            content={this.state.validPassword}
-                            isOpen={this.state.password.length > 0}
-                            hoverOpenDelay={1000000}
-                            position={Position.RIGHT}
-                        >
-                            <FormControl
-                                type="password"
-                                placeholder="password"
-                                required
-                                onChange={e => {
-                                    return this.onUpdatePassword(
-                                        (e.target as HTMLInputElement).value
-                                    );
-                                }}
-                            />
-                        </Tooltip>
-                    </FormGroup>
-                    <Tooltip
-                        content={this.state.generalError}
-                        isOpen={this.state.generalError.length > 0}
-                        position={Position.RIGHT}
-                    >
-                        <Button
-                            type="submit"
-                            onClick={e => {
-                                e.preventDefault();
-                                this.onLogin();
-                            }}
-                        >
-                            Submit
-                        </Button>
-                    </Tooltip>
-                </form>
-            </div>
+                            >
+                                Submit
+                            </Button>
+                        </form>
+                        {this.state.generalError.length > 0 ? (
+                            <Alert bsStyle="danger">
+                                {this.state.generalError}
+                            </Alert>
+                        ) : null}
+                    </Col>
+                </Row>
+            </Grid>
         );
     }
 }
