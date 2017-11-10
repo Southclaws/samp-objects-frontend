@@ -39,10 +39,11 @@ const COOKIE_OPTIONS: {
 interface AppProps {}
 
 interface AppState {
+    ready: boolean;
+    error?: string | JSX.Element;
     token: string;
     userID?: string;
     user?: User;
-    error?: string | JSX.Element;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -53,42 +54,81 @@ class App extends React.Component<AppProps, AppState> {
         let userID = cookie.load("userID");
 
         this.state = {
+            ready: false,
             token: token,
             userID: userID
         };
     }
 
     async componentDidMount() {
-        try {
-            let rawIndex = await fetch(ENDPOINT + "/v0/index", {
-                method: "get",
-                credentials: "include",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            let resp = await rawIndex.json();
+        let error: string | JSX.Element = "";
+        let user: User | string | undefined;
 
-            console.log({
-                index: resp,
-                token: this.state.token
-            });
+        console.log("attempt connect");
+        try {
+            let index = await this.aliveCheck();
+            console.log(index);
         } catch (e) {
-            this.onError(
-                <div>
-                    <p>Connection to the API server failed</p>
-                    <p>
-                        It may be offline temporarily for maintenance so please
-                        retry in a few minutes. If this problem persists, please
-                        let Southclaws know via SA:MP Forum, Discord or Twitter
-                    </p>
-                </div>
-            );
+            this.setState({
+                ready: true,
+                error: (
+                    <div>
+                        <p>Connection to the API server failed</p>
+                        <p>{(e as Error).message}</p>
+                        <p>
+                            It may be offline temporarily for maintenance so
+                            please retry in a few minutes. If this problem
+                            persists, please let Southclaws know via SA:MP
+                            Forum, Discord or Twitter
+                        </p>
+                    </div>
+                )
+            });
+            return;
         }
 
         if (this.state.userID !== undefined) {
-            let rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
+            try {
+                user = await this.getUserInfo();
+            } catch (e) {
+                error = (
+                    <div>
+                        <p>Failed to get user information</p>
+                        <p>{(e as Error).message}</p>
+                        <p>
+                            Try clearing your cookies for this site. If the
+                            problem persists, please let Southclaws know via
+                            SA:MP Forum, Discord or Twitter.
+                        </p>
+                    </div>
+                );
+            }
+        }
+
+        this.setState({
+            ready: true,
+            user: user === undefined ? user : undefined,
+            error: error
+        });
+    }
+
+    async aliveCheck() {
+        let rawIndex = await fetch(ENDPOINT + "/v0/index", {
+            method: "get",
+            credentials: "include",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return await rawIndex.json();
+    }
+
+    async getUserInfo() {
+        let rawUser: Response;
+
+        try {
+            rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
                 method: "get",
                 credentials: "include",
                 mode: "cors",
@@ -97,25 +137,25 @@ class App extends React.Component<AppProps, AppState> {
                     Authorization: "Bearer " + this.state.token
                 }
             });
-
-            if (rawUser.status !== 200) {
-                console.log(
-                    "failed to get user info:",
-                    rawUser.statusText,
-                    await rawUser.text()
-                );
-                return;
-            }
-
-            let user = (await rawUser.json()) as User;
-
-            if (user.id !== this.state.userID) {
-                console.log("user ID does not match returned user object");
-                return;
-            }
-
-            this.setState({ user: user });
+        } catch (e) {
+            return (e as Error).message;
         }
+
+        if (rawUser.status !== 200) {
+            return (
+                "failed to get user info: " +
+                rawUser.statusText +
+                (await rawUser.text())
+            );
+        }
+
+        let user = (await rawUser.json()) as User;
+
+        if (user.id !== this.state.userID) {
+            return "user ID does not match returned user object";
+        }
+
+        return user;
     }
 
     loggedIn() {
@@ -180,38 +220,54 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     render() {
-        let mainContent =
-            this.state.error === undefined ? (
-                <Switch>
-                    <Route exact path="/" component={Objects} />
-                    <this.IfLoggedIn path="/upload" component={Upload} />
-                    <this.IfLoggedIn path="/settings" component={Settings} />
-                    <Route
-                        path="/register"
-                        render={props => (
-                            <Register
-                                onSuccess={this.onReceiveToken.bind(this)}
-                            />
-                        )}
-                    />
-                    <Route
-                        path="/login"
-                        render={props => (
-                            <Login onSuccess={this.onReceiveToken.bind(this)} />
-                        )}
-                    />
-                    <Route
-                        path="/logout"
-                        render={props => (
-                            <Logout onLogout={this.onLogout.bind(this)} />
-                        )}
-                    />
-                    <Route path="/:username/:id" component={Details} />
-                    <Route path="/:username" component={Profile} />
-                </Switch>
-            ) : (
-                <Alert bsStyle="danger">{this.state.error}</Alert>
+        let mainContent: JSX.Element;
+
+        if (!this.state.ready) {
+            mainContent = (
+                <Alert bsStyle="success">Connecting to API server...</Alert>
             );
+        } else {
+            if (this.state.error === undefined) {
+                mainContent = (
+                    <Switch>
+                        <Route exact path="/" component={Objects} />
+                        <this.IfLoggedIn path="/upload" component={Upload} />
+                        <this.IfLoggedIn
+                            path="/settings"
+                            component={Settings}
+                        />
+                        <Route
+                            path="/register"
+                            render={props => (
+                                <Register
+                                    onSuccess={this.onReceiveToken.bind(this)}
+                                />
+                            )}
+                        />
+                        <Route
+                            path="/login"
+                            render={props => (
+                                <Login
+                                    onSuccess={this.onReceiveToken.bind(this)}
+                                />
+                            )}
+                        />
+                        <Route
+                            path="/logout"
+                            render={props => (
+                                <Logout onLogout={this.onLogout.bind(this)} />
+                            )}
+                        />
+                        <Route path="/:username/:id" component={Details} />
+                        <Route path="/:username" component={Profile} />
+                    </Switch>
+                );
+            } else {
+                mainContent = (
+                    <Alert bsStyle="danger">{this.state.error}</Alert>
+                );
+            }
+        }
         return (
             <Router>
                 <div>
