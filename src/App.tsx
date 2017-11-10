@@ -13,6 +13,7 @@ import { User } from "./types/User";
 import { Navigation } from "./components/Navigation";
 import { Profile } from "./components/Profile";
 import { Settings } from "./components/Settings";
+import { Terms } from "./components/Terms";
 import { Upload } from "./components/Upload";
 import { Objects } from "./components/Objects";
 import { Details } from "./components/Objects/Details";
@@ -62,7 +63,7 @@ class App extends React.Component<AppProps, AppState> {
 
     async componentDidMount() {
         let error: string | JSX.Element | undefined = undefined;
-        let user: User | string | undefined;
+        let user: User | undefined;
 
         try {
             let index = await this.aliveCheck();
@@ -106,7 +107,7 @@ class App extends React.Component<AppProps, AppState> {
 
         this.setState({
             ready: true,
-            user: user === undefined ? user : undefined,
+            user: user,
             error: error
         });
     }
@@ -126,32 +127,26 @@ class App extends React.Component<AppProps, AppState> {
     async getUserInfo() {
         let rawUser: Response;
 
-        try {
-            rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
-                method: "get",
-                credentials: "include",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + this.state.token
-                }
-            });
-        } catch (e) {
-            return (e as Error).message;
-        }
+        rawUser = await fetch(ENDPOINT + "/v0/accounts/info", {
+            method: "get",
+            credentials: "include",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + this.state.token
+            }
+        });
 
         if (rawUser.status !== 200) {
-            return (
-                "failed to get user info: " +
+            throw "failed to get user info: " +
                 rawUser.statusText +
-                (await rawUser.text())
-            );
+                (await rawUser.text());
         }
 
         let user = (await rawUser.json()) as User;
 
         if (user.id !== this.state.userID) {
-            return "user ID does not match returned user object";
+            throw "user ID does not match returned user object";
         }
 
         return user;
@@ -231,7 +226,8 @@ class App extends React.Component<AppProps, AppState> {
                 mainContent = (
                     <Switch>
                         <Route exact path="/" component={Objects} />
-                        <this.IfLoggedIn path="/upload" component={Upload} />
+                        <Route exact path="/terms" component={Terms} />
+                        <Route path="/upload" render={props => <Upload />} />
                         <this.IfLoggedIn
                             path="/settings"
                             component={Settings}

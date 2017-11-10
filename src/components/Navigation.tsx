@@ -24,9 +24,7 @@ export class Navigation extends React.Component<Props, State> {
                 <Navbar.Collapse>
                     <Nav>
                         <LinkContainer to="/upload">
-                            <NavItem eventKey={1} href="#">
-                                Upload
-                            </NavItem>
+                            <NavItem eventKey={1}>Upload</NavItem>
                         </LinkContainer>
                     </Nav>
                     <Nav pullRight>
@@ -36,9 +34,7 @@ export class Navigation extends React.Component<Props, State> {
                                 title="Account"
                                 id="basic-nav-dropdown"
                             >
-                                <LinkContainer
-                                    to={"/" + this.props.user.username}
-                                >
+                                <LinkContainer to={"/" + this.props.user.name}>
                                     <MenuItem eventKey={2.1}>Profile</MenuItem>
                                 </LinkContainer>
 
@@ -54,16 +50,12 @@ export class Navigation extends React.Component<Props, State> {
                             </NavDropdown>
                         ) : (
                             <LinkContainer to="/register">
-                                <NavItem eventKey={1} href="#">
-                                    Register
-                                </NavItem>
+                                <NavItem eventKey={1}>Register</NavItem>
                             </LinkContainer>
                         )}
                         {this.props.user !== undefined ? null : (
                             <LinkContainer to="/login">
-                                <NavItem eventKey={1} href="#">
-                                    Login
-                                </NavItem>
+                                <NavItem eventKey={1}>Login</NavItem>
                             </LinkContainer>
                         )}
                     </Nav>

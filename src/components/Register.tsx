@@ -96,7 +96,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
         }
 
         let user: User = {
-            username: this.state.username,
+            name: this.state.username,
             email: this.state.email,
             password: SHA256.sha256(this.state.password)
         };
@@ -134,10 +134,10 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                 default:
                     this.setState({
                         generalError:
-                            "oops, unknown error! info: " +
+                            "unknown error! info: " +
                             raw.statusText +
                             ": " +
-                            raw.body
+                            (await raw.text())
                     });
                     break;
             }
