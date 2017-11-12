@@ -22,10 +22,11 @@ import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 
-export const HOST = "localhost";
+export const HOST = "api.samp-objects.com";
 export const API_PORT = "8080";
 export const SELFURL = "http://" + HOST + ":3000";
 export const ENDPOINT = "http://" + HOST + ":" + API_PORT;
+
 const COOKIE_OPTIONS: {
     path?: string;
     expires?: Date;
