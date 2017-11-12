@@ -22,7 +22,7 @@ interface UploadState {
     validationError: string;
 
     object?: Object;
-    tags: string[];
+    allTags: string;
 }
 
 export class Upload extends React.Component<UploadProps, UploadState> {
@@ -50,7 +50,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             objectID: undefined,
             validationError: "",
             object: undefined,
-            tags: [] as string[]
+            allTags: ""
         };
     }
 
@@ -67,15 +67,49 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         this.setState({ object: updated });
     }
 
-    onTagsUpdate(tags: string[]) {
-        console.log(tags);
-        // this.setState({ tags: ["tag"] });
+    onUpdateDesc(description: string) {
+        let updated: Object;
+
+        if (this.state.object === undefined) {
+            updated = { name: "", description: "", category: "", tags: [""] };
+        } else {
+            updated = this.state.object;
+        }
+        updated.description = description;
+
+        this.setState({ object: updated });
+    }
+
+    onUpdateTags(value: string) {
+        let tags: string = "";
+        for (let ch = 0; ch < value.length; ch++) {
+            const element = value[ch];
+            if (element.match(/[a-zA-Z ]/)) {
+                tags += element;
+            }
+        }
+
+        let updated: Object;
+
+        if (this.state.object === undefined) {
+            updated = { name: "", description: "", category: "", tags: [""] };
+        } else {
+            updated = this.state.object;
+        }
+        updated.tags = tags.split(" ");
+
+        this.setState({
+            object: updated,
+            allTags: tags
+        });
     }
 
     onSubmit() {
         if (this.state.object === undefined) {
             return;
         }
+
+        console.log(this.state.object);
 
         if (
             !UsernameValidator().test(this.state.object.name) &&
@@ -93,6 +127,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         placeholder="name"
                         required
                         autoFocus
+                        maxLength={32}
                         onChange={e => {
                             return this.onUpdateName(
                                 (e.target as HTMLInputElement).value
@@ -105,8 +140,23 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         placeholder="description"
                         required
                         autoFocus
+                        maxLength={512}
                         onChange={e => {
-                            return this.onUpdateName(
+                            return this.onUpdateDesc(
+                                (e.target as HTMLInputElement).value
+                            );
+                        }}
+                    />
+                </FormGroup>
+                <FormGroup controlId="objectTags">
+                    <FormControl
+                        placeholder="tags (separated by spaces)"
+                        required
+                        autoFocus
+                        value={this.state.allTags}
+                        maxLength={128}
+                        onChange={e => {
+                            return this.onUpdateTags(
                                 (e.target as HTMLInputElement).value
                             );
                         }}
