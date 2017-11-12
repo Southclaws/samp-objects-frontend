@@ -8,7 +8,6 @@ import {
     Button,
     Alert
 } from "react-bootstrap";
-import { Tooltip, Position } from "@blueprintjs/core";
 import FineUploaderTraditional from "fine-uploader-wrappers";
 import Gallery from "react-fine-uploader";
 import "react-fine-uploader/gallery/gallery.css";
@@ -23,7 +22,6 @@ interface UploadProps {
 }
 
 interface UploadState {
-    validationError: string;
     generalError: string;
 
     object?: ObjectPackage;
@@ -37,7 +35,6 @@ export class Upload extends React.Component<UploadProps, UploadState> {
     constructor(props: UploadProps) {
         super(props);
         this.state = {
-            validationError: "",
             generalError: "",
             object: undefined,
             allTags: "",
@@ -145,6 +142,9 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             this.state.object.category === "" ||
             this.state.object.category === "select"
         ) {
+            this.setState({
+                generalError: "invalid object in state"
+            });
             return;
         }
 
@@ -152,7 +152,11 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             !UsernameValidator().test(this.state.object.name) &&
             this.state.object.name.length > 0
         ) {
-            this.setState({ validationError: "invalid name" });
+            this.setState({
+                generalError:
+                    "invalid model name, valid characters are: alphanumerics and hyphens"
+            });
+            return;
         }
 
         let raw: Response;
@@ -188,6 +192,10 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         }
 
         let object = await raw.json();
+        if (object === undefined || object === null) {
+            this.setState({ generalError: "received bad response" });
+            return;
+        }
 
         let uploader = new FineUploaderTraditional({
             options: {
@@ -343,20 +351,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         }}
                     />
                 </FormGroup>
-                <Tooltip
-                    content={this.state.validationError}
-                    isOpen={this.state.validationError.length > 0}
-                    position={Position.RIGHT}
+                <Button
+                    onClick={e => {
+                        e.preventDefault();
+                        this.onSubmit();
+                    }}
                 >
-                    <Button
-                        onClick={e => {
-                            e.preventDefault();
-                            this.onSubmit();
-                        }}
-                    >
-                        Done
-                    </Button>
-                </Tooltip>
+                    Done
+                </Button>
             </Col>
         );
     }
