@@ -23,9 +23,9 @@ import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 
 export const HOST = "api.samp-objects.com";
-export const API_PORT = "8080";
-export const SELFURL = "http://" + HOST + ":3000";
-export const ENDPOINT = "http://" + HOST + ":" + API_PORT;
+export const API_PORT = "443";
+export const SELFURL = "https://" + HOST + ":3000";
+export const ENDPOINT = "https://" + HOST + ":" + API_PORT;
 
 const COOKIE_OPTIONS: {
     path?: string;
@@ -120,6 +120,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     async aliveCheck() {
+        console.log("connecting to endpoint:", ENDPOINT);
         let rawIndex = await fetch(ENDPOINT + "/v0/index", {
             method: "get",
             credentials: "include",
@@ -205,6 +206,8 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     render() {
+        console.log("state on render", this.state);
+
         let mainContent: JSX.Element;
 
         if (!this.state.ready) {
