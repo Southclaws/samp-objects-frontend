@@ -35,7 +35,7 @@ const COOKIE_OPTIONS: {
     secure?: boolean;
     httpOnly?: boolean;
 } = {
-    path: "/",
+    path: "samp-objects.com",
     domain: "samp-objects.com"
 };
 
