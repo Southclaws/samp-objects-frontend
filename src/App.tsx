@@ -10,6 +10,7 @@ import { Alert } from "react-bootstrap";
 import cookie from "react-cookies";
 
 import { User } from "./types/User";
+import { ObjectPackage } from "./types/Object";
 import { Navigation } from "./components/Navigation";
 import { Profile } from "./components/Profile";
 import { Settings } from "./components/Settings";
@@ -91,14 +92,19 @@ class App extends React.Component<AppProps, AppState> {
             try {
                 user = await this.getUserInfo();
             } catch (e) {
+                cookie.remove("token", COOKIE_OPTIONS);
+                cookie.remove("userID", COOKIE_OPTIONS);
+                cookie.remove("userAuthData", COOKIE_OPTIONS);
                 error = (
                     <div>
                         <p>Failed to get user information</p>
                         <p>{(e as Error).message}</p>
                         <p>
-                            Try clearing your cookies for this site. If the
-                            problem persists, please let Southclaws know via
-                            SA:MP Forum, Discord or Twitter.
+                            Cookies may be corrupted, the app has attempted to
+                            resolve the issue so try refreshing the page. If the
+                            problem persists, try clearing your cookies for this
+                            site. If the problem persists, please let Southclaws
+                            know via SA:MP Forum, Discord or Twitter.
                         </p>
                     </div>
                 );
@@ -185,6 +191,13 @@ class App extends React.Component<AppProps, AppState> {
         location.href = "/";
     }
 
+    onUploadDone(object: ObjectPackage) {
+        if (this.state.user === undefined) {
+            return;
+        }
+        location.href = "/" + this.state.user.name + "/" + object.name;
+    }
+
     onError(err: string | JSX.Element) {
         console.log("Error event:", err);
         this.setState({ error: err });
@@ -216,7 +229,14 @@ class App extends React.Component<AppProps, AppState> {
                             <Route
                                 path="/upload"
                                 render={p => {
-                                    return <Upload />;
+                                    return (
+                                        <Upload
+                                            token={this.state.token}
+                                            onDone={this.onUploadDone.bind(
+                                                this
+                                            )}
+                                        />
+                                    );
                                 }}
                             />
                         )}

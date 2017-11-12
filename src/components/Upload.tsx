@@ -5,7 +5,8 @@ import {
     Col,
     FormGroup,
     FormControl,
-    Button
+    Button,
+    Alert
 } from "react-bootstrap";
 import { Tooltip, Position } from "@blueprintjs/core";
 import FineUploaderTraditional from "fine-uploader-wrappers";
@@ -13,49 +14,39 @@ import Gallery from "react-fine-uploader";
 import "react-fine-uploader/gallery/gallery.css";
 import * as UsernameValidator from "regex-username";
 
-import { Object } from "../types/Object";
+import { ObjectPackage } from "../types/Object";
+import { ENDPOINT } from "../App";
 
-interface UploadProps {}
+interface UploadProps {
+    token: string;
+    onDone(object: Object): void;
+}
 
 interface UploadState {
-    objectID?: string;
     validationError: string;
+    generalError: string;
 
-    object?: Object;
+    object?: ObjectPackage;
     allTags: string;
+    readyToUpload: boolean;
+
+    uploader?: any;
 }
 
 export class Upload extends React.Component<UploadProps, UploadState> {
-    uploader = new FineUploaderTraditional({
-        options: {
-            chunking: {
-                enabled: true
-            },
-            deleteFile: {
-                enabled: true,
-                endpoint: "/uploads"
-            },
-            request: {
-                endpoint: "/uploads"
-            },
-            retry: {
-                enableAuto: true
-            }
-        }
-    });
-
     constructor(props: UploadProps) {
         super(props);
         this.state = {
-            objectID: undefined,
             validationError: "",
+            generalError: "",
             object: undefined,
-            allTags: ""
+            allTags: "",
+            readyToUpload: false
         };
     }
 
     onUpdateName(name: string) {
-        let updated: Object;
+        let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
             updated = { name: "", description: "", category: "", tags: [""] };
@@ -68,7 +59,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
     }
 
     onUpdateDesc(description: string) {
-        let updated: Object;
+        let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
             updated = { name: "", description: "", category: "", tags: [""] };
@@ -81,7 +72,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
     }
 
     onUpdateCagetory(category: string) {
-        let updated: Object;
+        let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
             updated = { name: "", description: "", category: "", tags: [""] };
@@ -102,7 +93,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             }
         }
 
-        let updated: Object;
+        let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
             updated = { name: "", description: "", category: "", tags: [""] };
@@ -117,18 +108,17 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         });
     }
 
-    onSubmit() {
+    async onSubmit() {
         if (this.state.object === undefined) {
             return;
         }
         if (
             this.state.object.name === "" ||
-            this.state.object.category === ""
+            this.state.object.category === "" ||
+            this.state.object.category === "select"
         ) {
             return;
         }
-
-        console.log(this.state.object);
 
         if (
             !UsernameValidator().test(this.state.object.name) &&
@@ -136,6 +126,115 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         ) {
             this.setState({ validationError: "invalid name" });
         }
+
+        let raw: Response;
+        try {
+            raw = await fetch(ENDPOINT + "/v0/object", {
+                method: "post",
+                body: JSON.stringify(this.state.object),
+                mode: "cors",
+                credentials: "include",
+                headers: [
+                    ["Content-Type", "application/json"],
+                    ["Authorization", "Bearer " + this.props.token]
+                ]
+            });
+        } catch (err) {
+            this.setState({ generalError: (err as Error).message });
+            return;
+        }
+
+        if (raw.status > 299) {
+            switch (raw.status) {
+                default:
+                    this.setState({
+                        generalError:
+                            "unknown error! info: " +
+                            raw.statusText +
+                            ": " +
+                            (await raw.text())
+                    });
+                    break;
+            }
+            return;
+        }
+
+        let object = await raw.json();
+
+        let uploader = new FineUploaderTraditional({
+            options: {
+                callbacks: {
+                    onComplete: (
+                        id: number,
+                        name: string,
+                        responseJson: {
+                            success: boolean;
+                            error: string;
+                            object: ObjectPackage;
+                        },
+                        xhr: any
+                    ) => {
+                        this.setState({ object: responseJson.object });
+                    }
+                },
+                cors: {
+                    expected: true,
+                    sendCredentials: true
+                },
+                chunking: {
+                    enabled: true
+                },
+                request: {
+                    endpoint: ENDPOINT + "/v0/upload/" + object.id,
+                    customHeaders: {
+                        Authorization: "Bearer " + this.props.token
+                    }
+                },
+                retry: {
+                    enableAuto: true
+                }
+            }
+        });
+
+        this.setState({
+            readyToUpload: true,
+            object: object,
+            uploader: uploader
+        });
+    }
+
+    async onDone() {
+        if (this.state.object === undefined) {
+            this.setState({
+                generalError:
+                    "No object metadata specified, try reloading the page"
+            });
+            return;
+        }
+
+        if (
+            this.state.object.models === undefined ||
+            this.state.object.textures === undefined ||
+            this.state.object.models === null ||
+            this.state.object.textures === null
+        ) {
+            this.setState({
+                generalError: "You must add at least one .dff and one .txd"
+            });
+            return;
+        }
+
+        if (
+            this.state.object.models.length === 0 ||
+            this.state.object.textures.length === 0
+        ) {
+            this.setState({
+                generalError: "You must add at least one .dff and one .txd"
+            });
+            return;
+        }
+
+        this.props.onDone(this.state.object);
     }
 
     beforeUploadForm() {
@@ -184,7 +283,6 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         componentClass="select"
                         placeholder="cagegory"
                         onChange={e => {
-                            console.log((e.target as HTMLInputElement).value);
                             return this.onUpdateCagetory(
                                 (e.target as HTMLInputElement).value
                             );
@@ -233,25 +331,43 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             </Col>
         );
     }
-    // todo: ask user for information first, then present uploader after getting an upload URL from backend
 
+    upload() {
+        if (this.state.object === undefined) {
+            return;
+        }
+
+        return (
+            <Row>
+                <Col xs={12} lg={6}>
+                    <p>Drag .dff and .txd files to the area below.</p>
+                    <Gallery uploader={this.state.uploader} />
+                </Col>
+                <Col xs={12} lg={6}>
+                    <Button onClick={e => this.onDone()}>Done</Button>
+                </Col>
+            </Row>
+        );
+    }
     render() {
         return (
             <Grid>
                 <Row>
                     <Col xs={12} lg={12}>
-                        <h4>Upload Object</h4>
+                        <h4>Upload Objects and Textures</h4>
                     </Col>
                 </Row>
+                {this.state.readyToUpload === false
+                    ? this.beforeUploadForm()
+                    : this.upload()}
                 <Row>
-                    {this.state.objectID === undefined ? (
-                        this.beforeUploadForm()
-                    ) : (
-                        <Col xs={12} lg={12}>
-                            <p>Drag .dff and .txd files to the area below.</p>
-                            <Gallery uploader={this.uploader} />
-                        </Col>
-                    )}
+                    <Col xs={12} lg={12}>
+                        {this.state.generalError.length > 0 ? (
+                            <Alert bsStyle="danger">
+                                {this.state.generalError}
+                            </Alert>
+                        ) : null}
+                    </Col>
                 </Row>
             </Grid>
         );
