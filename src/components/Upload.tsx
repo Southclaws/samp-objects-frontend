@@ -49,7 +49,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
-            updated = { name: "", description: "", category: "", tags: [""] };
+            updated = {
+                name: "",
+                owner_id: "",
+                owner_name: "",
+                description: "",
+                category: "",
+                tags: [""]
+            };
         } else {
             updated = this.state.object;
         }
@@ -62,7 +69,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
-            updated = { name: "", description: "", category: "", tags: [""] };
+            updated = {
+                name: "",
+                owner_id: "",
+                owner_name: "",
+                description: "",
+                category: "",
+                tags: [""]
+            };
         } else {
             updated = this.state.object;
         }
@@ -75,7 +89,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
-            updated = { name: "", description: "", category: "", tags: [""] };
+            updated = {
+                name: "",
+                owner_id: "",
+                owner_name: "",
+                description: "",
+                category: "",
+                tags: [""]
+            };
         } else {
             updated = this.state.object;
         }
@@ -96,7 +117,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let updated: ObjectPackage;
 
         if (this.state.object === undefined) {
-            updated = { name: "", description: "", category: "", tags: [""] };
+            updated = {
+                name: "",
+                owner_id: "",
+                owner_name: "",
+                description: "",
+                category: "",
+                tags: [""]
+            };
         } else {
             updated = this.state.object;
         }

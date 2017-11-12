@@ -2,6 +2,8 @@
 export interface ObjectPackage {
     id?: string;
     name: string;
+    owner_id: string;
+    owner_name: string;
     description: string;
     category: string;
     tags: string[];
