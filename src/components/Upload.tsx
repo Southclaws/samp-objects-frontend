@@ -210,7 +210,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         },
                         xhr: any
                     ) => {
-                        this.setState({ object: responseJson.object });
+                        this.onSuccessfulUpload(responseJson.object);
                     }
                 },
                 cors: {
@@ -237,6 +237,47 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             object: object,
             uploader: uploader
         });
+    }
+
+    async onSuccessfulUpload(object: ObjectPackage) {
+        if (this.state.object === undefined) {
+            return;
+        }
+
+        console.log("received confirmation of successful upload", object);
+        let updated = this.state.object;
+
+        if (updated.images === undefined) {
+            updated.images = [];
+        }
+        if (object.images !== undefined) {
+            updated.images.concat(object.images);
+        }
+
+        if (updated.models === undefined) {
+            updated.models = [];
+        }
+        if (object.models !== undefined) {
+            updated.models.concat(object.models);
+        }
+
+        if (updated.textures === undefined) {
+            updated.textures = [];
+        }
+        if (object.textures !== undefined) {
+            updated.textures.concat(object.textures);
+        }
+
+        console.log(
+            "old",
+            this.state.object,
+            "recv",
+            object,
+            "merged",
+            updated
+        );
+
+        this.setState({ object: updated });
     }
 
     async onDone() {
