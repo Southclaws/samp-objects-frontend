@@ -247,24 +247,24 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         console.log("received confirmation of successful upload", object);
         let updated = this.state.object;
 
-        if (updated.images === undefined) {
-            updated.images = [];
-        }
         if (object.images !== undefined) {
+            if (updated.images === undefined) {
+                updated.images = [];
+            }
             updated.images.concat(object.images);
         }
 
-        if (updated.models === undefined) {
-            updated.models = [];
-        }
         if (object.models !== undefined) {
+            if (updated.models === undefined) {
+                updated.models = [];
+            }
             updated.models.concat(object.models);
         }
 
-        if (updated.textures === undefined) {
-            updated.textures = [];
-        }
         if (object.textures !== undefined) {
+            if (updated.textures === undefined) {
+                updated.textures = [];
+            }
             updated.textures.concat(object.textures);
         }
 
