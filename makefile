@@ -16,3 +16,13 @@ run:
 		-p 3000:3000 \
 		-d \
 		southclaws/samp-objects-frontend:$(VERSION)
+
+run-prod:
+	-docker kill samp-objects-frontend
+	-docker rm samp-objects-frontend
+	docker run \
+		--name samp-objects-frontend \
+		--restart on-failure \
+		-p 7792:80 \
+		-d \
+		southclaws/samp-objects-frontend:$(VERSION)
