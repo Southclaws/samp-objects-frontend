@@ -225,37 +225,99 @@ class App extends React.Component<AppProps, AppState> {
             if (this.state.error === undefined) {
                 mainContent = (
                     <Switch>
+                        // Object list
                         <Route exact path="/" component={Objects} />
+                        // Terms and Conditions
                         <Route exact path="/terms" component={Terms} />
-                        <Route path="/upload" render={props => <Upload />} />
-                        <this.IfLoggedIn
-                            path="/settings"
-                            component={Settings}
-                        />
-                        <Route
-                            path="/register"
-                            render={props => (
-                                <Register
-                                    onSuccess={this.onReceiveToken.bind(this)}
-                                />
-                            )}
-                        />
-                        <Route
-                            path="/login"
-                            render={props => (
-                                <Login
-                                    onSuccess={this.onReceiveToken.bind(this)}
-                                />
-                            )}
-                        />
-                        <Route
-                            path="/logout"
-                            render={props => (
-                                <Logout onLogout={this.onLogout.bind(this)} />
-                            )}
-                        />
+                        // Object page
                         <Route path="/:username/:id" component={Details} />
+                        // User profile page
                         <Route path="/:username" component={Profile} />
+                        // Upload
+                        {this.state.user === undefined ? (
+                            <Route
+                                exact
+                                path="/upload"
+                                render={props => <Redirect to="/login" />}
+                            />
+                        ) : (
+                            <Route
+                                path="/upload"
+                                render={p => {
+                                    return <Upload />;
+                                }}
+                            />
+                        )}
+                        // Settings
+                        {this.state.user === undefined ? (
+                            <Route
+                                exact
+                                path="/settings"
+                                render={props => <Redirect to="/login" />}
+                            />
+                        ) : (
+                            <Route
+                                path="/settings"
+                                render={p => {
+                                    return <Settings />;
+                                }}
+                            />
+                        )}
+                        // Register
+                        {this.state.user === undefined ? (
+                            <Route
+                                path="/register"
+                                render={props => (
+                                    <Register
+                                        onSuccess={this.onReceiveToken.bind(
+                                            this
+                                        )}
+                                    />
+                                )}
+                            />
+                        ) : (
+                            <Route
+                                exact
+                                path="/register"
+                                render={props => <Redirect to="/" />}
+                            />
+                        )}
+                        // Login
+                        {this.state.user === undefined ? (
+                            <Route
+                                path="/login"
+                                render={props => (
+                                    <Login
+                                        onSuccess={this.onReceiveToken.bind(
+                                            this
+                                        )}
+                                    />
+                                )}
+                            />
+                        ) : (
+                            <Route
+                                exact
+                                path="/login"
+                                render={props => <Redirect to="/" />}
+                            />
+                        )}
+                        // Logout
+                        {this.state.user === undefined ? (
+                            <Route
+                                exact
+                                path="/logout"
+                                render={props => <Redirect to="/login" />}
+                            />
+                        ) : (
+                            <Route
+                                path="/logout"
+                                render={props => (
+                                    <Logout
+                                        onLogout={this.onLogout.bind(this)}
+                                    />
+                                )}
+                            />
+                        )}
                     </Switch>
                 );
             } else {
