@@ -1,5 +1,15 @@
 import * as React from "react";
-import { Grid, Row, Col, Label, Alert, Panel, Image } from "react-bootstrap";
+import {
+    Grid,
+    Row,
+    Col,
+    Label,
+    Alert,
+    Panel,
+    Image,
+    ListGroup,
+    ListGroupItem
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { ENDPOINT } from "../../App";
@@ -11,6 +21,11 @@ interface DetailsProps {
 
 interface DetailsState {
     object?: ObjectPackage;
+}
+
+interface FileLink {
+    url: string;
+    name: string;
 }
 
 export class Details extends React.Component<DetailsProps, DetailsState> {
@@ -61,6 +76,35 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
         return urls;
     }
 
+    getFileURLs() {
+        let id: string;
+        let files: string[] = [];
+        if (this.state.object !== undefined) {
+            if (this.state.object.id !== undefined) {
+                id = this.state.object.id;
+            }
+            if (this.state.object.models !== undefined) {
+                files = files.concat(this.state.object.models);
+            }
+            if (this.state.object.textures !== undefined) {
+                files = files.concat(this.state.object.textures);
+            }
+        } else {
+            return;
+        }
+
+        let urls: FileLink[] = [];
+
+        files.forEach(fileName => {
+            urls.push({
+                url: ENDPOINT + "/v0/files/" + id + "/" + fileName,
+                name: fileName
+            });
+        });
+
+        return urls;
+    }
+
     render() {
         if (this.state === null) {
             return <Alert>Loading...</Alert>;
@@ -70,6 +114,11 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
             let images = this.getImageURLs();
             if (images === undefined) {
                 images = [];
+            }
+
+            let files = this.getFileURLs();
+            if (files === undefined) {
+                files = [];
             }
 
             return (
@@ -95,26 +144,30 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                     </Row>
                     <Row>
                         <Col xs={12} lg={12}>
-                            {this.state.object.tags === null ? (
-                                <Label>(no tags)</Label>
-                            ) : (
-                                <div>
-                                    {this.state.object.tags.map(
-                                        (
-                                            value: string,
-                                            index: number,
-                                            array: string[]
-                                        ) => {
-                                            return (
-                                                <span key={index}>
-                                                    {" "}
-                                                    <Label>{value}</Label>{" "}
-                                                </span>
-                                            );
-                                        }
-                                    )}
-                                </div>
-                            )}
+                            <p>
+                                {this.state.object.tags === null ? (
+                                    <Label>(no tags)</Label>
+                                ) : (
+                                    <span>
+                                        {this.state.object.tags.map(
+                                            (
+                                                value: string,
+                                                index: number,
+                                                array: string[]
+                                            ) => {
+                                                return (
+                                                    <span key={index}>
+                                                        {" "}
+                                                        <Label>
+                                                            {value}
+                                                        </Label>{" "}
+                                                    </span>
+                                                );
+                                            }
+                                        )}
+                                    </span>
+                                )}
+                            </p>
                         </Col>
                     </Row>
                     <Row>
@@ -122,6 +175,29 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                             <Panel>
                                 <h4>Description</h4>
                                 <p>{this.state.object.description}</p>
+                            </Panel>
+                            <Panel>
+                                <h4>Downloads</h4>
+                                <ListGroup>
+                                    {files.map(
+                                        (
+                                            value: FileLink,
+                                            index: number,
+                                            array: FileLink[]
+                                        ) => {
+                                            return (
+                                                <ListGroupItem key={index}>
+                                                    <a
+                                                        href={value.url}
+                                                        target="_blank"
+                                                    >
+                                                        {value.name}
+                                                    </a>
+                                                </ListGroupItem>
+                                            );
+                                        }
+                                    )}
+                                </ListGroup>
                             </Panel>
                         </Col>
                         <Col xs={12} lg={6}>
