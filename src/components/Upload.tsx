@@ -248,21 +248,21 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let updated = this.state.object;
 
         if (object.images !== undefined) {
-            if (updated.images === undefined) {
+            if (updated.images === undefined || updated.images === null) {
                 updated.images = [];
             }
             updated.images.concat(object.images);
         }
 
         if (object.models !== undefined) {
-            if (updated.models === undefined) {
+            if (updated.models === undefined || updated.models === null) {
                 updated.models = [];
             }
             updated.models.concat(object.models);
         }
 
         if (object.textures !== undefined) {
-            if (updated.textures === undefined) {
+            if (updated.textures === undefined || updated.textures === null) {
                 updated.textures = [];
             }
             updated.textures.concat(object.textures);
