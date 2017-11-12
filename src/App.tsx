@@ -311,9 +311,12 @@ class App extends React.Component<AppProps, AppState> {
                             />
                         )}
                         // Object page
-                        <Route path="/:username/:id" component={Details} />
+                        <Route
+                            path="/:userName/:objectName"
+                            component={Details}
+                        />
                         // User profile page
-                        <Route path="/:username" component={Profile} />
+                        <Route path="/:userName" component={Profile} />
                     </Switch>
                 );
             } else {
