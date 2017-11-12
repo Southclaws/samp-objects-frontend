@@ -35,8 +35,8 @@ const COOKIE_OPTIONS: {
     secure?: boolean;
     httpOnly?: boolean;
 } = {
-    path: HOST,
-    domain: HOST
+    path: "/",
+    domain: "samp-objects.com"
 };
 
 interface AppProps {}
