@@ -257,7 +257,8 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             this.state.object.textures.length === 0
         ) {
             this.setState({
-                generalError: "You must add at least one .dff and one .txd"
+                generalError:
+                    "You must add at least one .dff, one .txd and one image"
             });
             return;
         }
