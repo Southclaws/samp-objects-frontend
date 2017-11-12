@@ -381,6 +381,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         );
     }
     render() {
+        console.log("upload state", this.state);
         return (
             <Grid>
                 <Row>
