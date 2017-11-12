@@ -117,9 +117,7 @@ class App extends React.Component<AppProps, AppState> {
             method: "get",
             credentials: "include",
             mode: "cors",
-            headers: {
-                "Content-Type": "application/json"
-            }
+            headers: [["Content-Type", "application/json"]]
         });
         return await rawIndex.json();
     }
@@ -131,10 +129,10 @@ class App extends React.Component<AppProps, AppState> {
             method: "get",
             credentials: "include",
             mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + this.state.token
-            }
+            headers: [
+                ["Content-Type", "application/json"],
+                ["Authorization", "Bearer " + this.state.token]
+            ]
         });
 
         if (rawUser.status !== 200) {
@@ -156,28 +154,6 @@ class App extends React.Component<AppProps, AppState> {
         return this.state.user !== undefined;
     }
 
-    // IfLoggedIn is a TypeScript version of:
-    // https://reacttraining.com/react-router/web/example/auth-workflow
-    // it's just a stateless component that takes path and component (similar to <Route>)
-    // and renders the component if the user is logged in, if not, it redirects to /login
-    IfLoggedIn = (thisProps: { path: string; component: Function }) => {
-        return (
-            <Route
-                render={props =>
-                    this.state.user !== undefined ? (
-                        thisProps.component
-                    ) : (
-                        <Redirect
-                            to={{
-                                pathname: "/login",
-                                state: { from: props.location }
-                            }}
-                        />
-                    )}
-            />
-        );
-    };
-
     onReceiveToken(token: string, userID: string) {
         let options = COOKIE_OPTIONS;
 
@@ -185,8 +161,8 @@ class App extends React.Component<AppProps, AppState> {
         expires.setDate(Date.now() + 1000 * 60 * 60 * 24 * 14);
         options.expires = expires;
 
-        let r = cookie.save("token", token, options);
-        r = cookie.save("userID", userID, options);
+        cookie.save("token", token, options);
+        cookie.save("userID", userID, options);
 
         this.setState({
             token: token,
@@ -229,10 +205,6 @@ class App extends React.Component<AppProps, AppState> {
                         <Route exact path="/" component={Objects} />
                         // Terms and Conditions
                         <Route exact path="/terms" component={Terms} />
-                        // Object page
-                        <Route path="/:username/:id" component={Details} />
-                        // User profile page
-                        <Route path="/:username" component={Profile} />
                         // Upload
                         {this.state.user === undefined ? (
                             <Route
@@ -318,6 +290,10 @@ class App extends React.Component<AppProps, AppState> {
                                 )}
                             />
                         )}
+                        // Object page
+                        <Route path="/:username/:id" component={Details} />
+                        // User profile page
+                        <Route path="/:username" component={Profile} />
                     </Switch>
                 );
             } else {
