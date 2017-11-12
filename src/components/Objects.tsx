@@ -1,16 +1,16 @@
 import * as React from "react";
-import { Grid, Row, Col } from "react-bootstrap";
+import { Grid, Row, Col, Alert } from "react-bootstrap";
 
-import { ObjectData } from "./Objects/Details";
 import { Thumb } from "./Objects/Thumb";
-
+import { ObjectPackage } from "../types/Object";
+import { ENDPOINT } from "../App";
 interface ObjectsProps {}
 
 interface ObjectsState {
-    objects: ObjectData[];
+    objects: ObjectPackage[];
 }
 
-function ObjectRow(props: { key: number; object: ObjectData }) {
+function ObjectRow(props: { key: number; object: ObjectPackage }) {
     return (
         <Col xs={12} md={2}>
             <Thumb object={props.object} />
@@ -22,62 +22,49 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
     constructor(props: ObjectsProps) {
         super(props);
         this.state = {
-            objects: [
-                {
-                    owner: "J0shES",
-                    id: "meme-of-the-week",
-                    rating: 5.0,
-                    image:
-                        // tslint:disable-next-line
-                        "https://media.discordapp.net/attachments/376371371795546112/376866034080022538/unknown.png?width=200&height=200"
-                },
-                {
-                    owner: "TommyB",
-                    id: "me-an-mi-dog",
-                    rating: 3.5,
-                    image:
-                        // tslint:disable-next-line
-                        "https://media.discordapp.net/attachments/376371371795546112/376802253819871233/unknown.png?width=200&height=200"
-                },
-                {
-                    owner: "Southclaws",
-                    id: "redis-is-life",
-                    rating: 0.5,
-                    image:
-                        // tslint:disable-next-line
-                        "https://d1q6f0aelx0por.cloudfront.net/product-logos/89e5782a-76ea-4b94-a561-39e331c281a5-redis.png"
-                },
-                {
-                    owner: "Vince0789",
-                    id: "roads-ftw",
-                    rating: 2.5,
-                    image:
-                        // tslint:disable-next-line
-                        "https://cdn.discordapp.com/attachments/376371371795546112/376819755291508736/modular_roads.jpg?width=200&height=200"
-                }
-            ]
+            objects: []
         };
     }
 
-    componentDidMount() {
-        //
+    async componentDidMount() {
+        let response = await fetch(ENDPOINT + "/v0/objects", {
+            method: "get",
+            credentials: "include",
+            mode: "cors",
+            headers: [["Content-Type", "application/json"]]
+        });
+        let objects = await response.json();
+        console.log(objects);
+        this.setState({ objects: objects });
     }
 
     render() {
-        return (
-            <Grid fluid>
-                <Row>
-                    {this.state.objects.map(
-                        (
-                            value: ObjectData,
-                            index: number,
-                            array: ObjectData[]
-                        ) => {
-                            return <ObjectRow key={index} object={value} />;
-                        }
-                    )}
-                </Row>
-            </Grid>
-        );
+        if (this.state.objects === null) {
+            return (
+                <Grid fluid>
+                    <Row>
+                        <Col xs={12} md={6} mdOffset={3}>
+                            <Alert>There are no objects listed.</Alert>
+                        </Col>
+                    </Row>
+                </Grid>
+            );
+        } else {
+            return (
+                <Grid fluid>
+                    <Row>
+                        {this.state.objects.map(
+                            (
+                                value: ObjectPackage,
+                                index: number,
+                                array: ObjectPackage[]
+                            ) => {
+                                return <ObjectRow key={index} object={value} />;
+                            }
+                        )}
+                    </Row>
+                </Grid>
+            );
+        }
     }
 }

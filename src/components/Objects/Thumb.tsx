@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 import ReactStars from "react-stars";
 
 import "./Thumb.css";
-import { ObjectData } from "./Details";
+import { ObjectPackage } from "../../types/Object";
+import { ENDPOINT } from "../../App";
 
 interface ThumbProps {
-    object: ObjectData;
+    object: ObjectPackage;
 }
 
 interface ThumbState {}
@@ -16,18 +17,18 @@ interface ThumbState {}
 export class Thumb extends React.Component<ThumbProps, ThumbState> {
     render() {
         return (
-            <Thumbnail src={this.props.object.image}>
+            <Thumbnail src={ENDPOINT + "/v0/images/" + this.props.object.id}>
                 <div className="text-center">
                     <div>
                         <Link
                             to={
                                 "/" +
-                                this.props.object.owner +
+                                this.props.object.owner_name +
                                 "/" +
-                                this.props.object.id
+                                this.props.object.name
                             }
                         >
-                            {this.props.object.owner}/{this.props.object.id}
+                            {this.props.object.owner_name}/{this.props.object.name}
                         </Link>
                     </div>
                     <div className="pt-button-group">
@@ -50,7 +51,7 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
                     <Tooltip content="Rate">
                         <ReactStars
                             edit={false}
-                            value={this.props.object.rating}
+                            value={2.5} // this.props.object.rating
                         />
                     </Tooltip>
                 </div>
