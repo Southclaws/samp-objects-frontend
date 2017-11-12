@@ -80,6 +80,19 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         this.setState({ object: updated });
     }
 
+    onUpdateCagetory(category: string) {
+        let updated: Object;
+
+        if (this.state.object === undefined) {
+            updated = { name: "", description: "", category: "", tags: [""] };
+        } else {
+            updated = this.state.object;
+        }
+        updated.category = category;
+
+        this.setState({ object: updated });
+    }
+
     onUpdateTags(value: string) {
         let tags: string = "";
         for (let ch = 0; ch < value.length; ch++) {
@@ -108,6 +121,12 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         if (this.state.object === undefined) {
             return;
         }
+        if (
+            this.state.object.name === "" ||
+            this.state.object.category === ""
+        ) {
+            return;
+        }
 
         console.log(this.state.object);
 
@@ -120,6 +139,17 @@ export class Upload extends React.Component<UploadProps, UploadState> {
     }
 
     beforeUploadForm() {
+        // todo: get from server
+        let categories = [
+            "Characters",
+            "Buildings (exterior only)",
+            "Buildings (walk-in)",
+            "Buildings (interior only)",
+            "Furniture",
+            "Weapons",
+            "Vehicle Attachments",
+            "Misc"
+        ];
         return (
             <Col xs={12} lg={12}>
                 <FormGroup controlId="objectName">
@@ -138,6 +168,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                 <FormGroup controlId="objectDesc">
                     <FormControl
                         placeholder="description"
+                        componentClass="textarea"
                         required
                         autoFocus
                         maxLength={512}
@@ -147,6 +178,29 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                             );
                         }}
                     />
+                </FormGroup>
+                <FormGroup controlId="objectCategory">
+                    <FormControl
+                        componentClass="select"
+                        placeholder="cagegory"
+                        onChange={e => {
+                            console.log((e.target as HTMLInputElement).value);
+                            return this.onUpdateCagetory(
+                                (e.target as HTMLInputElement).value
+                            );
+                        }}
+                    >
+                        <option key={0} value="select">
+                            select
+                        </option>
+                        {categories.map(
+                            (value: string, index: number, array: string[]) => (
+                                <option key={index + 1} value={value}>
+                                    {value}
+                                </option>
+                            )
+                        )}
+                    </FormControl>
                 </FormGroup>
                 <FormGroup controlId="objectTags">
                     <FormControl
