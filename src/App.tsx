@@ -1,5 +1,4 @@
 import * as React from "react";
-import "./App.scss";
 import {
     BrowserRouter as Router,
     Switch,
@@ -22,14 +21,14 @@ import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 
-export const HOST = "samp-objects.com";
-export const API_SCHEME = "https";
-export const API_HOST = "api.samp-objects.com";
-export const API_PORT = "443";
-// export const HOST = "localhost";
-// export const API_SCHEME = "http";
-// export const API_HOST = "localhost";
-// export const API_PORT = "8080";
+// export const HOST = "samp-objects.com";
+// export const API_SCHEME = "https";
+// export const API_HOST = "api.samp-objects.com";
+// export const API_PORT = "443";
+export const HOST = "localhost";
+export const API_SCHEME = "http";
+export const API_HOST = "localhost";
+export const API_PORT = "8080";
 
 export const ENDPOINT = API_SCHEME + "://" + API_HOST + ":" + API_PORT;
 
