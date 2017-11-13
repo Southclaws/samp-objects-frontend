@@ -1,12 +1,8 @@
 import * as React from "react";
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Redirect
-} from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import cookie from "react-cookies";
+import * as ReactGA from "react-ga";
 
 import { User } from "./types/User";
 import { ObjectPackage } from "./types/Object";
@@ -60,6 +56,15 @@ class App extends React.Component<AppProps, AppState> {
 
         let token = cookie.load("token");
         let userID = cookie.load("userID");
+
+        ReactGA.initialize("UA-78828365-2", {
+            debug: false,
+            titleCase: false,
+            gaOptions: {
+                userId: userID
+            }
+        });
+        ReactGA.pageview(window.location.pathname + window.location.search);
 
         this.state = {
             ready: false,
@@ -335,12 +340,10 @@ class App extends React.Component<AppProps, AppState> {
             }
         }
         return (
-            <Router>
-                <div>
-                    <Navigation user={this.state.user} />
-                    {mainContent}
-                </div>
-            </Router>
+            <div>
+                <Navigation user={this.state.user} />
+                {mainContent}
+            </div>
         );
     }
 }
