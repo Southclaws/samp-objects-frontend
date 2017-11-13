@@ -251,6 +251,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             if (updated.images === undefined || updated.images === null) {
                 updated.images = object.images;
             } else {
+                console.log("updated.images", updated.images);
                 updated.images.concat(object.images);
             }
         }
@@ -259,6 +260,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             if (updated.models === undefined || updated.models === null) {
                 updated.models = object.models;
             } else {
+                console.log("updated.models", updated.models);
                 updated.models.concat(object.models);
             }
         }
@@ -267,6 +269,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             if (updated.textures === undefined || updated.textures === null) {
                 updated.textures = object.textures;
             } else {
+                console.log("updated.textures", updated.textures);
                 updated.textures.concat(object.textures);
             }
         }
