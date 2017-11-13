@@ -3,6 +3,7 @@ import { Thumbnail } from "react-bootstrap";
 import { Button, Tooltip } from "@blueprintjs/core";
 import { Link } from "react-router-dom";
 import ReactStars from "react-stars";
+import { Textfit } from "react-textfit";
 
 import "./Thumb.css";
 import { ObjectPackage } from "../../types/Object";
@@ -20,16 +21,21 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
             <Thumbnail src={ENDPOINT + "/v0/images/" + this.props.object.id}>
                 <div className="text-center">
                     <div>
-                        <Link
-                            to={
-                                "/" +
-                                this.props.object.owner_name +
-                                "/" +
-                                this.props.object.name
-                            }
-                        >
-                            {this.props.object.owner_name}/{this.props.object.name}
-                        </Link>
+                        <Textfit>
+                            <p>
+                                <Link
+                                    to={
+                                        "/" +
+                                        this.props.object.owner_name +
+                                        "/" +
+                                        this.props.object.name
+                                    }
+                                >
+                                    {this.props.object.owner_name} /{" "}
+                                    {this.props.object.name}
+                                </Link>
+                            </p>
+                        </Textfit>
                     </div>
                     <div className="pt-button-group">
                         <Tooltip content="Download All (coming soon!)">

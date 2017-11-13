@@ -25,6 +25,7 @@
         "react-scripts-ts": "2.8.0",
         "react-stars": "^2.2.5",
         "react-tagsinput": "^3.19.0",
+        "react-textfit": "^1.0.1",
         "react-toastr": "^3.0.0",
         "regex-username": "^2.0.0"
     },
