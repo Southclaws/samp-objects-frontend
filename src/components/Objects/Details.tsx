@@ -145,7 +145,8 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                     <Row>
                         <Col xs={12} lg={12}>
                             <p>
-                                {this.state.object.tags === null ? (
+                                {this.state.object.tags === undefined ||
+                                this.state.object.tags === null ? (
                                     <Label>(no tags)</Label>
                                 ) : (
                                     <span>
