@@ -38,20 +38,29 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
                         </Textfit>
                     </div>
                     <div className="pt-button-group">
-                        <Tooltip content="Download All (coming soon!)">
+                        <Tooltip
+                            useSmartPositioning
+                            content="Download All (coming soon!)"
+                        >
                             <Button iconName="pt-icon-download" />
                         </Tooltip>
-                        <Tooltip content="Share (coming soon!)">
+                        <Tooltip
+                            useSmartPositioning
+                            content="Share (coming soon!)"
+                        >
                             <Button iconName="pt-icon-share" />
                         </Tooltip>
-                        <Tooltip content="Favourite (coming soon!)">
+                        <Tooltip
+                            useSmartPositioning
+                            content="Favourite (coming soon!)"
+                        >
                             <Button iconName="pt-icon-add-to-artifact" />
                         </Tooltip>
                     </div>
 
                     <span className="thumb-stuff-separator">---</span>
 
-                    <Tooltip content="Rate (coming soon!)">
+                    <Tooltip useSmartPositioning content="Rate (coming soon!)">
                         <ReactStars
                             edit={false}
                             value={2.5} // this.props.object.rating
