@@ -1,4 +1,4 @@
-FROM node
+FROM node as build
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ARG app_env
@@ -8,16 +8,10 @@ RUN mkdir -p /frontend
 WORKDIR /frontend
 COPY . .
 
-RUN npm install
+RUN npm install && npm run build
 
-CMD if [ ${APP_ENV} = production ]; \
-    then \
-    npm install -g http-server && \
-    npm run build && \
-    cd build && \
-    hs -a 0.0.0.0 -p 3000; \
-    else \
-    npm run start; \
-    fi
+# nginx
 
+FROM m31271n/nginx-spa as run
+COPY --from=build /frontend/build /app
 EXPOSE 3000
