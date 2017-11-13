@@ -137,13 +137,18 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         if (this.state.object === undefined) {
             return;
         }
+        if (this.state.object.name === "") {
+            this.setState({
+                generalError: "you must enter a name"
+            });
+            return;
+        }
         if (
-            this.state.object.name === "" ||
             this.state.object.category === "" ||
             this.state.object.category === "select"
         ) {
             this.setState({
-                generalError: "invalid object in state"
+                generalError: "you must select a category"
             });
             return;
         }
@@ -161,7 +166,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
 
         let raw: Response;
         try {
-            raw = await fetch(ENDPOINT + "/v0/object", {
+            raw = await fetch(ENDPOINT + "/v0/object/prepare", {
                 method: "post",
                 body: JSON.stringify(this.state.object),
                 mode: "cors",
@@ -200,18 +205,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         let uploader = new FineUploaderTraditional({
             options: {
                 callbacks: {
-                    onComplete: (
-                        id: number,
-                        name: string,
-                        responseJson: {
-                            success: boolean;
-                            error: string;
-                            object: ObjectPackage;
-                        },
-                        xhr: any
-                    ) => {
-                        this.onSuccessfulUpload(responseJson.object);
-                    }
+                    //
                 },
                 cors: {
                     expected: true,
@@ -221,7 +215,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     enabled: true
                 },
                 request: {
-                    endpoint: ENDPOINT + "/v0/upload/" + object.id,
+                    endpoint: ENDPOINT + "/v0/object/upload/" + object.id,
                     customHeaders: {
                         Authorization: "Bearer " + this.props.token
                     }
@@ -239,53 +233,6 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         });
     }
 
-    async onSuccessfulUpload(object: ObjectPackage) {
-        if (this.state.object === undefined) {
-            return;
-        }
-
-        console.log("received confirmation of successful upload", object);
-        let updated = this.state.object;
-
-        if (object.images !== undefined) {
-            if (updated.images === undefined || updated.images === null) {
-                updated.images = object.images;
-            } else {
-                console.log("updated.images", updated.images);
-                updated.images.concat(object.images);
-            }
-        }
-
-        if (object.models !== undefined) {
-            if (updated.models === undefined || updated.models === null) {
-                updated.models = object.models;
-            } else {
-                console.log("updated.models", updated.models);
-                updated.models.concat(object.models);
-            }
-        }
-
-        if (object.textures !== undefined) {
-            if (updated.textures === undefined || updated.textures === null) {
-                updated.textures = object.textures;
-            } else {
-                console.log("updated.textures", updated.textures);
-                updated.textures.concat(object.textures);
-            }
-        }
-
-        console.log(
-            "old",
-            this.state.object,
-            "recv",
-            object,
-            "merged",
-            updated
-        );
-
-        this.setState({ object: updated });
-    }
-
     async onDone() {
         if (this.state.object === undefined) {
             this.setState({
@@ -295,26 +242,42 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             return;
         }
 
-        if (
-            this.state.object.models === undefined ||
-            this.state.object.textures === undefined ||
-            this.state.object.models === null ||
-            this.state.object.textures === null
-        ) {
-            this.setState({
-                generalError: "You must add at least one .dff and one .txd"
-            });
+        let resp: Response;
+
+        try {
+            resp = await fetch(
+                ENDPOINT + "/v0/object/finish/" + this.state.object.id,
+                {
+                    method: "post",
+                    body: JSON.stringify(this.state.object),
+                    mode: "cors",
+                    credentials: "include",
+                    headers: [
+                        ["Content-Type", "application/json"],
+                        ["Authorization", "Bearer " + this.props.token]
+                    ]
+                }
+            );
+        } catch (err) {
+            this.setState({ generalError: (err as Error).message });
             return;
         }
 
-        if (
-            this.state.object.models.length === 0 ||
-            this.state.object.textures.length === 0
-        ) {
-            this.setState({
-                generalError:
-                    "You must add at least one .dff, one .txd and one image"
-            });
+        if (resp.status !== 200) {
+            switch (resp.status) {
+                case 404:
+                    this.setState({
+                        generalError:
+                            "Upload timed out, please reload the page and try again"
+                    });
+                    break;
+
+                default:
+                    this.setState({
+                        generalError: "Unknown error: " + resp.statusText
+                    });
+                    break;
+            }
             return;
         }
 

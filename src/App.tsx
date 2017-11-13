@@ -22,10 +22,16 @@ import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 
-export const HOST = "api.samp-objects.com";
+export const HOST = "samp-objects.com";
+export const API_SCHEME = "https";
+export const API_HOST = "api.samp-objects.com";
 export const API_PORT = "443";
-export const SELFURL = "https://" + HOST + ":3000";
-export const ENDPOINT = "https://" + HOST + ":" + API_PORT;
+// export const HOST = "localhost";
+// export const API_SCHEME = "http";
+// export const API_HOST = "localhost";
+// export const API_PORT = "8080";
+
+export const ENDPOINT = API_SCHEME + "://" + API_HOST + ":" + API_PORT;
 
 const COOKIE_OPTIONS: {
     path?: string;
@@ -35,8 +41,8 @@ const COOKIE_OPTIONS: {
     secure?: boolean;
     httpOnly?: boolean;
 } = {
-    path: "samp-objects.com",
-    domain: "samp-objects.com"
+    path: HOST,
+    domain: HOST
 };
 
 interface AppProps {}
