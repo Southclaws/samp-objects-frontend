@@ -20,6 +20,7 @@ interface DetailsProps {
 }
 
 interface DetailsState {
+    error?: string;
     object?: ObjectPackage;
 }
 
@@ -34,20 +35,44 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
     }
 
     async componentDidMount() {
-        let response = await fetch(
-            ENDPOINT +
-                "/v0/objects/" +
-                this.props.match.params.userName +
-                "/" +
-                this.props.match.params.objectName,
-            {
-                method: "get",
-                credentials: "include",
-                mode: "cors",
-                headers: [["Content-Type", "application/json"]]
+        let response: Response | undefined;
+        let object: ObjectPackage | undefined;
+
+        try {
+            response = await fetch(
+                ENDPOINT +
+                    "/v0/objects/" +
+                    this.props.match.params.userName +
+                    "/" +
+                    this.props.match.params.objectName,
+                {
+                    method: "get",
+                    credentials: "include",
+                    mode: "cors",
+                    headers: [["Content-Type", "application/json"]]
+                }
+            );
+        } catch (e) {
+            this.setState({ error: (e as Error).message });
+            return;
+        }
+
+        if (response.status !== 200) {
+            switch (response.status) {
+                case 404:
+                    this.setState({ error: "No object found by that name :(" });
+                    break;
+
+                default:
+                    this.setState({
+                        error: "Unknown error occurred: " + response.statusText
+                    });
+                    break;
             }
-        );
-        let object = await response.json();
+            return;
+        }
+
+        object = await response.json();
         this.setState({ object: object });
     }
 
@@ -109,7 +134,7 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
         if (this.state === null) {
             return <Alert>Loading...</Alert>;
         } else if (this.state.object === undefined) {
-            return <Alert>Loading...</Alert>;
+            return <Alert bsStyle="danger">{this.state.error}</Alert>;
         } else {
             let images = this.getImageURLs();
             if (images === undefined) {
@@ -135,8 +160,8 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                                     }
                                 >
                                     <strong>
-                                        {this.props.match.params.userName}
-                                        /{this.props.match.params.objectName}
+                                        {this.props.match.params.userName} /{" "}
+                                        {this.props.match.params.objectName}
                                     </strong>
                                 </Link>
                             </h2>
