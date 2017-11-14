@@ -2,7 +2,6 @@ import * as React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import cookie from "react-cookies";
-import * as ReactGA from "react-ga";
 
 import { User } from "./types/User";
 import { ObjectPackage } from "./types/Object";
@@ -17,14 +16,14 @@ import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 
-export const HOST = "samp-objects.com";
-export const API_SCHEME = "https";
-export const API_HOST = "api.samp-objects.com";
-export const API_PORT = "443";
-// export const HOST = "localhost";
-// export const API_SCHEME = "http";
-// export const API_HOST = "localhost";
-// export const API_PORT = "8080";
+// export const HOST = "samp-objects.com";
+// export const API_SCHEME = "https";
+// export const API_HOST = "api.samp-objects.com";
+// export const API_PORT = "443";
+export const HOST = "localhost";
+export const API_SCHEME = "http";
+export const API_HOST = "localhost";
+export const API_PORT = "8080";
 
 export const ENDPOINT = API_SCHEME + "://" + API_HOST + ":" + API_PORT;
 
@@ -56,15 +55,6 @@ class App extends React.Component<AppProps, AppState> {
 
         let token = cookie.load("token");
         let userID = cookie.load("userID");
-
-        ReactGA.initialize("UA-78828365-2", {
-            debug: false,
-            titleCase: false,
-            gaOptions: {
-                userId: userID
-            }
-        });
-        ReactGA.pageview(window.location.pathname + window.location.search);
 
         this.state = {
             ready: false,

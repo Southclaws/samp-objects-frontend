@@ -14,6 +14,7 @@ import "react-fine-uploader/gallery/gallery.css";
 import * as UsernameValidator from "regex-username";
 
 import { ObjectPackage } from "../types/Object";
+import { APIResponse } from "../types/Error";
 import { ENDPOINT } from "../App";
 
 interface UploadProps {
@@ -272,6 +273,13 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     });
                     break;
 
+                case 400:
+                    let error = (await resp.json()) as APIResponse;
+                    this.setState({
+                        generalError: "Upload incomplete: " + error.message
+                    });
+                    break;
+
                 default:
                     this.setState({
                         generalError: "Unknown error: " + resp.statusText
@@ -381,7 +389,10 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         return (
             <Row>
                 <Col xs={12} lg={6}>
-                    <p>Drag .dff and .txd files to the area below.</p>
+                    <p>
+                        Drag <strong>.dff</strong>, <strong>.txd</strong> and{" "}
+                        <strong>image</strong> files to the area below.
+                    </p>
                     <Gallery uploader={this.state.uploader} />
                 </Col>
                 <Col xs={12} lg={6}>
