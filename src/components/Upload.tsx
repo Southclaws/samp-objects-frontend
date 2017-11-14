@@ -305,79 +305,93 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             "Misc"
         ];
         return (
-            <Col xs={12} lg={12}>
-                <FormGroup controlId="objectName">
-                    <FormControl
-                        placeholder="name"
-                        required
-                        autoFocus
-                        maxLength={32}
-                        onChange={e => {
-                            return this.onUpdateName(
-                                (e.target as HTMLInputElement).value
-                            );
-                        }}
-                    />
-                </FormGroup>
-                <FormGroup controlId="objectDesc">
-                    <FormControl
-                        placeholder="description"
-                        componentClass="textarea"
-                        required
-                        autoFocus
-                        maxLength={512}
-                        onChange={e => {
-                            return this.onUpdateDesc(
-                                (e.target as HTMLInputElement).value
-                            );
-                        }}
-                    />
-                </FormGroup>
-                <FormGroup controlId="objectCategory">
-                    <FormControl
-                        componentClass="select"
-                        placeholder="cagegory"
-                        onChange={e => {
-                            return this.onUpdateCagetory(
-                                (e.target as HTMLInputElement).value
-                            );
+            <Row>
+                <Col xs={12} lg={12}>
+                    <p>First, enter the details for your object.</p>
+                    <p>
+                        When you're ready, hit <strong>Done</strong> to begin
+                        uploading files!
+                    </p>
+                </Col>
+
+                <Col xs={12} lg={12}>
+                    <FormGroup controlId="objectName">
+                        <FormControl
+                            placeholder="name"
+                            required
+                            autoFocus
+                            maxLength={32}
+                            onChange={e => {
+                                return this.onUpdateName(
+                                    (e.target as HTMLInputElement).value
+                                );
+                            }}
+                        />
+                    </FormGroup>
+                    <FormGroup controlId="objectDesc">
+                        <FormControl
+                            placeholder="description"
+                            componentClass="textarea"
+                            required
+                            autoFocus
+                            maxLength={512}
+                            onChange={e => {
+                                return this.onUpdateDesc(
+                                    (e.target as HTMLInputElement).value
+                                );
+                            }}
+                        />
+                    </FormGroup>
+                    <FormGroup controlId="objectCategory">
+                        <FormControl
+                            componentClass="select"
+                            placeholder="cagegory"
+                            onChange={e => {
+                                return this.onUpdateCagetory(
+                                    (e.target as HTMLInputElement).value
+                                );
+                            }}
+                        >
+                            <option key={0} value="select">
+                                select
+                            </option>
+                            {categories.map(
+                                (
+                                    value: string,
+                                    index: number,
+                                    array: string[]
+                                ) => (
+                                    <option key={index + 1} value={value}>
+                                        {value}
+                                    </option>
+                                )
+                            )}
+                        </FormControl>
+                    </FormGroup>
+                    <FormGroup controlId="objectTags">
+                        <FormControl
+                            placeholder="tags (separated by spaces)"
+                            required
+                            autoFocus
+                            value={this.state.allTags}
+                            maxLength={128}
+                            onChange={e => {
+                                return this.onUpdateTags(
+                                    (e.target as HTMLInputElement).value
+                                );
+                            }}
+                        />
+                    </FormGroup>
+                    <Button
+                        onClick={e => {
+                            e.preventDefault();
+                            this.onSubmit();
                         }}
                     >
-                        <option key={0} value="select">
-                            select
-                        </option>
-                        {categories.map(
-                            (value: string, index: number, array: string[]) => (
-                                <option key={index + 1} value={value}>
-                                    {value}
-                                </option>
-                            )
-                        )}
-                    </FormControl>
-                </FormGroup>
-                <FormGroup controlId="objectTags">
-                    <FormControl
-                        placeholder="tags (separated by spaces)"
-                        required
-                        autoFocus
-                        value={this.state.allTags}
-                        maxLength={128}
-                        onChange={e => {
-                            return this.onUpdateTags(
-                                (e.target as HTMLInputElement).value
-                            );
-                        }}
-                    />
-                </FormGroup>
-                <Button
-                    onClick={e => {
-                        e.preventDefault();
-                        this.onSubmit();
-                    }}
-                >
-                    Done
-                </Button>
-            </Col>
+                        Done
+                    </Button>
+                </Col>
+            </Row>
         );
     }
 
