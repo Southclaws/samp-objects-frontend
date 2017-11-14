@@ -306,7 +306,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         ];
         return (
             <Row>
-                <Col xs={12} lg={12}>
+                <Col xs={12} lg={6} lgOffset={3}>
                     <p>First, enter the details for your object.</p>
                     <p>
                         When you're ready, hit <strong>Done</strong> to begin
@@ -314,7 +314,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     </p>
                 </Col>
 
-                <Col xs={12} lg={12}>
+                <Col xs={12} lg={6} lgOffset={3}>
                     <FormGroup controlId="objectName">
                         <FormControl
                             placeholder="name"
@@ -402,14 +402,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
 
         return (
             <Row>
-                <Col xs={12} lg={6}>
+                <Col xs={12} lg={6} lgOffset={3}>
                     <p>
                         Drag <strong>.dff</strong>, <strong>.txd</strong> and{" "}
                         <strong>image</strong> files to the area below.
                     </p>
                     <Gallery uploader={this.state.uploader} />
                 </Col>
-                <Col xs={12} lg={6}>
+                <Col xs={12} lg={6} lgOffset={3}>
                     <Button onClick={e => this.onDone()}>Done</Button>
                 </Col>
             </Row>
@@ -420,7 +420,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         return (
             <Grid>
                 <Row>
-                    <Col xs={12} lg={12}>
+                    <Col xs={12} lg={6} lgOffset={3}>
                         <h4>Upload Objects and Textures</h4>
                     </Col>
                 </Row>
@@ -428,7 +428,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     ? this.beforeUploadForm()
                     : this.upload()}
                 <Row>
-                    <Col xs={12} lg={12}>
+                    <Col xs={12} lg={6} lgOffset={3}>
                         {this.state.generalError.length > 0 ? (
                             <Alert bsStyle="danger">
                                 {this.state.generalError}
