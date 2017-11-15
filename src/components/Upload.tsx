@@ -11,8 +11,8 @@ import {
 import FineUploaderTraditional from "fine-uploader-wrappers";
 import Gallery from "react-fine-uploader";
 import "react-fine-uploader/gallery/gallery.css";
-import * as UsernameValidator from "regex-username";
 
+import { isValidName } from "./Utils";
 import { ObjectPackage } from "../types/Object";
 import { APIResponse } from "../types/Error";
 import { ENDPOINT } from "../App";
@@ -154,8 +154,11 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             return;
         }
 
+        console.log(isValidName(this.state.object.name));
+        console.log(this.state.object.name);
+
         if (
-            !UsernameValidator().test(this.state.object.name) &&
+            !isValidName(this.state.object.name) &&
             this.state.object.name.length > 0
         ) {
             this.setState({
@@ -304,6 +307,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             "Vehicle Attachments",
             "Misc"
         ];
+
         return (
             <Row>
                 <Col xs={12} lg={6} lgOffset={3}>
@@ -415,6 +419,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             </Row>
         );
     }
+
     render() {
         console.log("upload state", this.state);
         return (
