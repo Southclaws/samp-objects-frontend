@@ -152,6 +152,14 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                         <Col xs={12} lg={12}>
                             <h2>
                                 <Link
+                                    to={"/" + this.props.match.params.userName}
+                                >
+                                    <strong>
+                                        {this.props.match.params.userName}
+                                    </strong>
+                                </Link>
+                                {" / "}
+                                <Link
                                     to={
                                         "/" +
                                         this.props.match.params.userName +
@@ -160,7 +168,6 @@ export class Details extends React.Component<DetailsProps, DetailsState> {
                                     }
                                 >
                                     <strong>
-                                        {this.props.match.params.userName} /{" "}
                                         {this.props.match.params.objectName}
                                     </strong>
                                 </Link>
