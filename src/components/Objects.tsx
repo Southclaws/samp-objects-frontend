@@ -5,7 +5,12 @@ import { Thumb } from "./Objects/Thumb";
 import { ObjectPackage } from "../types/Object";
 import { ENDPOINT } from "../App";
 
-interface ObjectsProps {}
+interface ObjectsProps {
+    userName: string;
+    category: string;
+    tags: string[];
+    sort: string;
+}
 
 interface ObjectsState {
     objects: ObjectPackage[];
@@ -28,7 +33,23 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
     }
 
     async componentDidMount() {
-        let response = await fetch(ENDPOINT + "/v0/objects", {
+        let query: string[] = [];
+
+        if (this.props.userName !== "") {
+            query.push("userName=" + this.props.userName);
+        }
+        if (this.props.category !== "") {
+            query.push("category=" + this.props.category);
+        }
+        if (this.props.tags !== undefined) {
+            if (this.props.tags.length > 0) {
+                query.push("tags=" + this.props.tags.join(","));
+            }
+        }
+
+        let queryString = query.join("&");
+
+        let response = await fetch(ENDPOINT + "/v0/objects?" + queryString, {
             method: "get",
             credentials: "include",
             mode: "cors",

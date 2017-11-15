@@ -225,7 +225,18 @@ class App extends React.Component<AppProps, AppState> {
                 mainContent = (
                     <Switch>
                         // Object list
-                        <Route exact path="/" component={Objects} />
+                        <Route
+                            exact
+                            path="/"
+                            render={props => (
+                                <Objects
+                                    userName=""
+                                    category=""
+                                    tags={[]}
+                                    sort=""
+                                />
+                            )}
+                        />
                         // Terms and Conditions
                         <Route exact path="/terms" component={Terms} />
                         // Upload

@@ -99,7 +99,12 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
                     <Col xs={12} lg={12}>
                         <Panel>
                             <h3>Objects</h3>
-                            <Objects />
+                            <Objects
+                                userName={this.state.userName}
+                                category=""
+                                tags={[]}
+                                sort=""
+                            />
                         </Panel>
                     </Col>
                 </Row>
