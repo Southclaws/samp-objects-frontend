@@ -148,7 +148,13 @@ class App extends React.Component<AppProps, AppState> {
                 rawUser.statusText +
                 (await rawUser.text());
         }
+        }
 
+            switch (rawUser.status) {
+                case 401:
+                    return;
+
+                default:
         let user = (await rawUser.json()) as User;
 
         if (user.id !== this.state.userID) {
