@@ -144,17 +144,17 @@ class App extends React.Component<AppProps, AppState> {
         });
 
         if (rawUser.status !== 200) {
-            throw "failed to get user info: " +
-                rawUser.statusText +
-                (await rawUser.text());
-        }
-        }
-
             switch (rawUser.status) {
                 case 401:
                     return;
 
                 default:
+                    throw "failed to get user info: " +
+                        rawUser.statusText +
+                        (await rawUser.text());
+            }
+        }
+
         let user = (await rawUser.json()) as User;
 
         if (user.id !== this.state.userID) {
