@@ -37,12 +37,12 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
                         </p>
                     </div>
                     <div className="pt-button-group">
-                        <Tooltip content="Download All (coming soon!)">
+                        {/* <Tooltip content="Download All (coming soon!)">
                             <Button iconName="pt-icon-download" />
                         </Tooltip>
                         <Tooltip content="Share (coming soon!)">
                             <Button iconName="pt-icon-share" />
-                        </Tooltip>
+                        </Tooltip> */}
                         <Tooltip content="Favourite (coming soon!)">
                             <Button iconName="pt-icon-add-to-artifact" />
                         </Tooltip>
@@ -50,7 +50,7 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
 
                     <span className="thumb-stuff-separator">---</span>
 
-                    <Tooltip content="Rate (coming soon!)">
+                    <Tooltip content="Rate">
                         <Rating
                             object={this.props.object}
                             onRate={this.props.onRate}
