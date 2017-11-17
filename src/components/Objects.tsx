@@ -16,10 +16,14 @@ interface ObjectsState {
     objects: ObjectPackage[];
 }
 
-function ObjectRow(props: { key: number; object: ObjectPackage }) {
+function ObjectRow(props: {
+    key: number;
+    object: ObjectPackage;
+    onRate(rating: number): void;
+}) {
     return (
         <Col xs={12} md={2}>
-            <Thumb object={props.object} />
+            <Thumb object={props.object} onRate={props.onRate} />
         </Col>
     );
 }
@@ -60,6 +64,40 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
         this.setState({ objects: objects });
     }
 
+    async onRate(rate: number, object: ObjectPackage) {
+        let resp: Response;
+
+        try {
+            resp = await fetch(ENDPOINT + "/v0/ratings/" + object.id, {
+                method: "post",
+                credentials: "include",
+                mode: "cors",
+                headers: [["Content-Type", "application/json"]],
+                body: JSON.stringify({
+                    value: rate
+                })
+            });
+        } catch (e) {
+            console.log("failed to post ratings endpoint: " + e);
+            return;
+        }
+
+        switch (resp.status) {
+            case 201:
+                // added rating
+                break;
+            case 202:
+                // removed rating
+                break;
+            case 400 || 500:
+                console.log((await resp.json()).error);
+                break;
+
+            default:
+                break;
+        }
+    }
+
     render() {
         if (this.state.objects === null) {
             return (
@@ -81,7 +119,15 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                                 index: number,
                                 array: ObjectPackage[]
                             ) => {
-                                return <ObjectRow key={index} object={value} />;
+                                return (
+                                    <ObjectRow
+                                        key={index}
+                                        object={value}
+                                        onRate={props => {
+                                            this.onRate(props, value);
+                                        }}
+                                    />
+                                );
                             }
                         )}
                     </Row>

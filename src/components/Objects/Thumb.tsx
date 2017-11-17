@@ -2,14 +2,16 @@ import * as React from "react";
 import { Thumbnail } from "react-bootstrap";
 import { Button, Tooltip } from "@blueprintjs/core";
 import { Link } from "react-router-dom";
-import ReactStars from "react-stars";
+
+import { ENDPOINT } from "../../App";
+import { ObjectPackage } from "../../types/Object";
+import { Rating } from "./Rating";
 
 import "./Thumb.css";
-import { ObjectPackage } from "../../types/Object";
-import { ENDPOINT } from "../../App";
 
 interface ThumbProps {
     object: ObjectPackage;
+    onRate(rating: number): void;
 }
 
 interface ThumbState {}
@@ -49,9 +51,9 @@ export class Thumb extends React.Component<ThumbProps, ThumbState> {
                     <span className="thumb-stuff-separator">---</span>
 
                     <Tooltip content="Rate (coming soon!)">
-                        <ReactStars
-                            edit={false}
-                            value={2.5} // this.props.object.rating
+                        <Rating
+                            object={this.props.object}
+                            onRate={this.props.onRate}
                         />
                     </Tooltip>
                 </div>

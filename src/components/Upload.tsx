@@ -53,7 +53,11 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                 owner_name: "",
                 description: "",
                 category: "",
-                tags: [""]
+                tags: [""],
+                rate_count: 0,
+                rate_value: 0,
+
+                rate_average: 0
             };
         } else {
             updated = this.state.object;
@@ -73,7 +77,11 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                 owner_name: "",
                 description: "",
                 category: "",
-                tags: [""]
+                tags: [""],
+                rate_count: 0,
+                rate_value: 0,
+
+                rate_average: 0
             };
         } else {
             updated = this.state.object;
@@ -93,7 +101,10 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                 owner_name: "",
                 description: "",
                 category: "",
-                tags: [""]
+                tags: [""],
+                rate_count: 0,
+                rate_value: 0,
+                rate_average: 0
             };
         } else {
             updated = this.state.object;
@@ -121,7 +132,10 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                 owner_name: "",
                 description: "",
                 category: "",
-                tags: [""]
+                tags: [""],
+                rate_count: 0,
+                rate_value: 0,
+                rate_average: 0
             };
         } else {
             updated = this.state.object;

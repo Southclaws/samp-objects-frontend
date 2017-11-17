@@ -7,6 +7,9 @@ export interface ObjectPackage {
     description: string;
     category: string;
     tags: string[];
+    rate_count: number;
+    rate_value: number;
+    rate_average: number;
     images?: string[];
     models?: string[];
     textures?: string[];
