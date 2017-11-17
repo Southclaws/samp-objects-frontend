@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Grid, Row, Col, Alert } from "react-bootstrap";
+import cookie from "react-cookies";
 
 import { Thumb } from "./Objects/Thumb";
 import { ObjectPackage } from "../types/Object";
@@ -72,7 +73,10 @@ export class Objects extends React.Component<ObjectsProps, ObjectsState> {
                 method: "post",
                 credentials: "include",
                 mode: "cors",
-                headers: [["Content-Type", "application/json"]],
+                headers: [
+                    ["Content-Type", "application/json"],
+                    ["Authorization", "Bearer " + cookie.load("token")]
+                ],
                 body: JSON.stringify({
                     value: rate
                 })
