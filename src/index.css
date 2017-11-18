@@ -1,5 +1,25 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+a.blank-rr-link {
+    text-decoration: none;
+    color: lightgrey;
+}
+
+a.blank-rr-link:hover {
+    text-decoration: none;
+    color: grey;
+}
+
+a.blank-rr-link-active {
+    text-decoration: none;
+    color: white;
+}
+
+a.blank-rr-link-active:hover {
+    text-decoration: none;
+    color: lightgrey;
 }
