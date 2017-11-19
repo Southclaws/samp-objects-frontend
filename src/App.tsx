@@ -15,6 +15,7 @@ import { Details } from "./components/Objects/Details";
 import { Register } from "./components/Register";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
+import { ErrorBoundary } from "./Error";
 
 export const HOST = "samp-objects.com";
 export const API_SCHEME = "https";
@@ -349,7 +350,7 @@ class App extends React.Component<AppProps, AppState> {
         return (
             <div>
                 <Navigation user={this.state.user} />
-                {mainContent}
+                <ErrorBoundary>{mainContent}</ErrorBoundary>
             </div>
         );
     }
