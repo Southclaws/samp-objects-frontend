@@ -12,6 +12,47 @@ interface Props {
 interface State {}
 
 export class Navigation extends React.Component<Props, State> {
+    account() {
+        if (this.props.user !== undefined) {
+            return (
+                <NavDropdown
+                    eventKey={2}
+                    title="Account"
+                    id="basic-nav-dropdown"
+                >
+                    <LinkContainer to={"/" + this.props.user.name}>
+                        <MenuItem eventKey={2.1}>Profile</MenuItem>
+                    </LinkContainer>
+
+                    <LinkContainer to="/settings">
+                        <MenuItem eventKey={2.2}>Settings</MenuItem>
+                    </LinkContainer>
+
+                    <MenuItem divider />
+
+                    <LinkContainer to="/logout">
+                        <MenuItem eventKey={2.3}>Log Out</MenuItem>
+                    </LinkContainer>
+                </NavDropdown>
+            );
+        } else {
+            return (
+                <NavDropdown
+                    eventKey={2}
+                    title="Account"
+                    id="basic-nav-dropdown"
+                >
+                    <LinkContainer to="/register">
+                        <NavItem eventKey={2.1}>Register</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/login">
+                        <NavItem eventKey={2.2}>Login</NavItem>
+                    </LinkContainer>
+                </NavDropdown>
+            );
+        }
+    }
+
     render() {
         return (
             <Navbar staticTop collapseOnSelect>
@@ -26,38 +67,7 @@ export class Navigation extends React.Component<Props, State> {
                         <LinkContainer to="/upload">
                             <NavItem eventKey={1}>Upload</NavItem>
                         </LinkContainer>
-                    </Nav>
-                    <Nav pullRight>
-                        {this.props.user !== undefined ? (
-                            <NavDropdown
-                                eventKey={2}
-                                title="Account"
-                                id="basic-nav-dropdown"
-                            >
-                                <LinkContainer to={"/" + this.props.user.name}>
-                                    <MenuItem eventKey={2.1}>Profile</MenuItem>
-                                </LinkContainer>
-
-                                <LinkContainer to="/settings">
-                                    <MenuItem eventKey={2.2}>Settings</MenuItem>
-                                </LinkContainer>
-
-                                <MenuItem divider />
-
-                                <LinkContainer to="/logout">
-                                    <MenuItem eventKey={2.3}>Log Out</MenuItem>
-                                </LinkContainer>
-                            </NavDropdown>
-                        ) : (
-                            <LinkContainer to="/register">
-                                <NavItem eventKey={1}>Register</NavItem>
-                            </LinkContainer>
-                        )}
-                        {this.props.user !== undefined ? null : (
-                            <LinkContainer to="/login">
-                                <NavItem eventKey={1}>Login</NavItem>
-                            </LinkContainer>
-                        )}
+                        {this.account()}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
